@@ -1,9 +1,9 @@
 package main
 
 import (
-	authboot "auth-service/boot"
-	"auth-service/internal/auth/firebase"
+	"auth-service/boot"
 	authhttp "auth-service/internal/http"
+	"auth-service/internal/storage/firebase"
 	"fmt"
 	"log"
 	"net/http"
@@ -17,7 +17,8 @@ func main() {
 		log.Println("Exiting...")
 	}()
 
-	authboot.LoadEnv()
+	boot.LoadEnv()
+	boot.LoadDb()
 
 	firebase.InitFirebaseSDK()
 

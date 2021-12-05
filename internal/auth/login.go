@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"auth-service/internal/auth/firebase"
+	"auth-service/internal/storage/firebase"
 	"auth-service/pkg/errors"
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"
@@ -40,7 +40,7 @@ func LoginUserFromToken(writer http.ResponseWriter, req *http.Request, token str
 }
 
 func LoginUserFromCreds(writer http.ResponseWriter, req *http.Request) {
-	username, password, ok := req.BasicAuth()
+	_, _, ok := req.BasicAuth()
 	if ok {
 		// Check in DB if exists
 

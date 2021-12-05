@@ -1,5 +1,6 @@
 package auth
 
-func extractToken(string token) (string, string) {
-
+func extractToken(token string) (string, string) {
+	// TODO
+	return "", ""
 }
