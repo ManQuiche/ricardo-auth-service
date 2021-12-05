@@ -1,31 +1,23 @@
 package main
 
 import (
+	authboot "auth-service/boot"
 	"auth-service/internal/auth/firebase"
 	authhttp "auth-service/internal/http"
-	"auth-service/pkg/errors"
 	"fmt"
-	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/julienschmidt/httprouter"
 )
-
-func checkEnv(name string) {
-	if os.Getenv(name) == "" {
-		errors.MissingEnvVarF(name)
-	}
-}
-
-func init() {
-	checkEnv("URL")
-	checkEnv("PORT")
-}
 
 func main() {
 	defer func() {
 		log.Println("Exiting...")
 	}()
+
+	authboot.LoadEnv()
 
 	firebase.InitFirebaseSDK()
 

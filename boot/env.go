@@ -6,7 +6,10 @@ import (
 )
 
 func LoadEnv() {
-
+	LoadOneEnv("DB_HOST")
+	LoadOneEnv("DB_HOST")
+	LoadOneEnv("PORT")
+	LoadOneEnv("URL")
 }
 
 func LoadOneEnv(name string) string {
