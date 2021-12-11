@@ -5,16 +5,25 @@ import (
 	"os"
 )
 
+var (
+	dbHost     string
+	dbUrl      string
+	dbUser     string
+	dbPassword string
+	port       string
+	url        string
+)
+
 func LoadEnv() {
-	LoadOneEnv("DB_HOST")
-	LoadOneEnv("DB_HOST")
-	LoadOneEnv("DB_USER")
-	LoadOneEnv("DB_PASSWORD")
-	LoadOneEnv("PORT")
-	LoadOneEnv("URL")
+	dbHost = env("DB_HOST")
+	dbUrl = env("DB_URL")
+	dbUser = env("DB_USER")
+	dbPassword = env("DB_PASSWORD")
+	port = env("PORT")
+	url = env("URL")
 }
 
-func LoadOneEnv(name string) string {
+func env(name string) string {
 	str, ok := os.LookupEnv(name)
 	if !ok {
 		errors.MissingEnvVarF(name)

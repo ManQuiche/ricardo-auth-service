@@ -1,13 +1,14 @@
 package auth
 
 import (
+	"auth-service/internal/entities"
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
 
 func CreateUser(writer http.ResponseWriter, req *http.Request, p httprouter.Params) {
-	var ur CreateUserRequest
+	var ur entities.CreateUserRequest
 
 	err := json.NewDecoder(req.Body).Decode(&ur)
 	if err != nil {
