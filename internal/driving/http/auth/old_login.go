@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"auth-service/internal/storage/firebase"
+	"auth-service/internal/driven/firebase"
 	"auth-service/pkg/errors"
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"

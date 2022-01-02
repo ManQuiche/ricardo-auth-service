@@ -7,7 +7,7 @@ import (
 
 var (
 	dbHost     string
-	dbUrl      string
+	dbPort     string
 	dbUser     string
 	dbPassword string
 	port       string
@@ -16,7 +16,7 @@ var (
 
 func LoadEnv() {
 	dbHost = env("DB_HOST")
-	dbUrl = env("DB_URL")
+	dbPort = env("DB_PORT")
 	dbUser = env("DB_USER")
 	dbPassword = env("DB_PASSWORD")
 	port = env("PORT")

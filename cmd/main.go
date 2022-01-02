@@ -2,7 +2,7 @@ package main
 
 import (
 	"auth-service/boot"
-	"auth-service/internal/storage/firebase"
+	"auth-service/internal/driven/firebase"
 )
 
 func main() {

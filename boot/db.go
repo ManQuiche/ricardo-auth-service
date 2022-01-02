@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
-	"os"
 )
 
 var (
@@ -13,20 +12,15 @@ var (
 )
 
 func LoadDb() {
-
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
 	// TODO: finish that shiiit
 	//connectionString := fmt.Sprintf("")
-	client, err := sql.Open("cockroach", fmt.Sprintf(user, ":", password, "@", host, ":", port))
+	client, err := sql.Open("cockroach", fmt.Sprintf(dbUser, ":", dbPassword, "@", dbHost, ":", dbPort))
 	if err != nil {
-		errors.CannotConnectToDb(host, port)
+		errors.CannotConnectToDb(dbHost, dbPort)
 	}
 
 	err = client.Ping()
 	if err != nil {
-		errors.CannotConnectToDb(host, port)
+		errors.CannotConnectToDb(dbHost, dbPort)
 	}
 }

@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"auth-service/internal/entities"
+	"auth-service/internal/core/entities"
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
