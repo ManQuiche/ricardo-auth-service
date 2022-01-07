@@ -26,9 +26,8 @@ func ServeHTTP() {
 	appURL := fmt.Sprintf("%s:%s", url, port)
 	log.Printf("Launching server on %s...\n", appURL)
 
-	go func() {
-		log.Fatalln(router.Run(appURL))
-	}()
+	log.Fatalln(router.Run(appURL))
 
-	log.Println("HTTP server stopped, exiting...")
+	// TODO: go func and etc
+	//log.Println("HTTP server stopped, exiting...")
 }

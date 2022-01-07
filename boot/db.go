@@ -1,26 +1,37 @@
 package boot
 
 import (
+	"auth-service/internal/core/entities"
 	"auth-service/pkg/errors"
-	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
+	"log"
 )
 
 var (
-	client *sql.DB
+	client *gorm.DB
 )
 
 func LoadDb() {
 	// TODO: finish that shiiit
 	//connectionString := fmt.Sprintf("")
-	client, err := sql.Open("cockroach", fmt.Sprintf(dbUser, ":", dbPassword, "@", dbHost, ":", dbPort))
+
+	var err error
+	client, err = gorm.Open(postgres.Open(
+		fmt.Sprint("postgres://", dbUser, ":", dbPassword, "@", dbHost, ":", dbPort, "?sslmode=disable")), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			TablePrefix: "ricardo.",
+		},
+	})
 	if err != nil {
 		errors.CannotConnectToDb(dbHost, dbPort)
 	}
 
-	err = client.Ping()
+	err = client.AutoMigrate(&entities.User{})
 	if err != nil {
-		errors.CannotConnectToDb(dbHost, dbPort)
+		log.Fatal("could not migrate db, exiting...")
 	}
 }

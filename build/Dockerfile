@@ -1,4 +1,4 @@
-FROM golang:1.16.8-bullseye
+FROM golang:1.17-alpine3.15
 WORKDIR /app
 
 COPY ../go.mod ./

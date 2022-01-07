@@ -1,7 +1,10 @@
 package auth
 
-import "auth-service/internal/core/entities/auth"
+import (
+	"auth-service/internal/core/entities/auth"
+	"context"
+)
 
 type Authenticate interface {
-	Login(username, password string) (*auth.TokenPair, error)
+	Login(ctx context.Context, username, password string) (*auth.TokenPair, error)
 }

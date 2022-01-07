@@ -1,8 +1,12 @@
 package auth
 
 import (
+	"auth-service/internal/core/entities"
 	authEntities "auth-service/internal/core/entities/auth"
 	authPort "auth-service/internal/core/ports/auth"
+	"context"
+	"github.com/golang-jwt/jwt"
+	"time"
 )
 
 type AuthenticateService interface {
@@ -10,7 +14,12 @@ type AuthenticateService interface {
 }
 
 type authenticateService struct {
-	repo authPort.AuthenticationRepository
+	repo          authPort.AuthenticationRepository
+	accessSecret  []byte
+	refreshSecret []byte
+	// Expiration in minutes
+	//accessTokenExp uint8
+	//refreshTokenExp uint16
 }
 
 func NewAuthenticateService(repo authPort.AuthenticationRepository) AuthenticateService {
@@ -19,11 +28,32 @@ func NewAuthenticateService(repo authPort.AuthenticationRepository) Authenticate
 	}
 }
 
-func (s authenticateService) Login(username, password string) (*authEntities.TokenPair, error) {
-	user, err := s.repo.Exists(username, password)
+func (s authenticateService) Login(ctx context.Context, username, password string) (*authEntities.TokenPair, error) {
+	user, err := s.repo.Exists(ctx, username, password)
 	if err != nil {
 		return nil, err
 	}
 
-	return nil, nil
+	accessTokenClaims := jwt.MapClaims{
+		"exp": time.Now().Add(time.Minute * 15).Unix(),
+		"iss": "aut",
+		"sub": user.ID,
+	}
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessTokenClaims)
+
+	refreshTokenClaims := jwt.MapClaims{
+		"exp": time.Now().Add(time.Hour * 72).Unix(),
+		"iss": "aut",
+		"sub": user.ID,
+	}
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshTokenClaims)
+
+	return &authEntities.TokenPair{
+		Access:  *accessToken,
+		Refresh: *refreshToken,
+	}, nil
+}
+
+func (s authenticateService) Save(ctx context.Context, user entities.User) error {
+	return s.repo.Save(ctx, user)
 }
