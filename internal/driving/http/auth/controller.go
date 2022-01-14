@@ -46,7 +46,19 @@ func (c controller) Create(gtx *gin.Context) {
 	}
 }
 
-func (controller) Login(gtx *gin.Context) {
-	//TODO implement me
-	panic("implement me")
+func (c controller) Login(gtx *gin.Context) {
+	var loginRequest entities.LoginRequest
+	err := gtx.BindJSON(&loginRequest)
+	if err != nil {
+		_ = errors2.GinErrorHandler(gtx, err, http.StatusBadRequest)
+		return
+	}
+
+	tokens, err := c.authr.Login(gtx.Request.Context(), loginRequest)
+	if err != nil {
+		_ = errors2.GinErrorHandler(gtx, err, http.StatusInternalServerError)
+		return
+	}
+
+	gtx.JSON(http.StatusOK, tokens)
 }

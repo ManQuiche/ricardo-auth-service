@@ -14,4 +14,9 @@ type TokenPair struct {
 	Refresh jwt.Token `json:"refresh_token"`
 }
 
+type SignedTokenPair struct {
+	Access  string `json:"access_token"`
+	Refresh string `json:"refresh_token"`
+}
+
 //type UserClaims

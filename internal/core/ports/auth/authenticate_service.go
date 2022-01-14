@@ -7,6 +7,6 @@ import (
 )
 
 type Authenticate interface {
-	Login(ctx context.Context, username, password string) (*auth.TokenPair, error)
+	Login(ctx context.Context, loginRequest entities.LoginRequest) (*auth.SignedTokenPair, error)
 	Save(ctx context.Context, user entities.User) error
 }

@@ -22,15 +22,17 @@ type authenticateService struct {
 	//refreshTokenExp uint16
 }
 
-func NewAuthenticateService(repo authPort.AuthenticationRepository) AuthenticateService {
+func NewAuthenticateService(repo authPort.AuthenticationRepository, accessSecret, refreshSecret []byte) AuthenticateService {
 	return authenticateService{
-		repo: repo,
+		repo:          repo,
+		accessSecret:  accessSecret,
+		refreshSecret: refreshSecret,
 	}
 }
 
-func (s authenticateService) Login(ctx context.Context, username, password string) (*authEntities.TokenPair, error) {
-	user, err := s.repo.Exists(ctx, username, password)
-	if err != nil {
+func (s authenticateService) Login(ctx context.Context, loginRequest entities.LoginRequest) (*authEntities.SignedTokenPair, error) {
+	user, err := s.repo.Exists(ctx, loginRequest.Username, loginRequest.Password)
+	if err != nil || (*user == entities.User{}) {
 		return nil, err
 	}
 
@@ -40,6 +42,7 @@ func (s authenticateService) Login(ctx context.Context, username, password strin
 		"sub": user.ID,
 	}
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessTokenClaims)
+	signedAT, _ := accessToken.SignedString(s.accessSecret)
 
 	refreshTokenClaims := jwt.MapClaims{
 		"exp": time.Now().Add(time.Hour * 72).Unix(),
@@ -47,10 +50,11 @@ func (s authenticateService) Login(ctx context.Context, username, password strin
 		"sub": user.ID,
 	}
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshTokenClaims)
+	signedRT, _ := refreshToken.SignedString(s.refreshSecret)
 
-	return &authEntities.TokenPair{
-		Access:  *accessToken,
-		Refresh: *refreshToken,
+	return &authEntities.SignedTokenPair{
+		Access:  signedAT,
+		Refresh: signedRT,
 	}, nil
 }
 

@@ -11,5 +11,5 @@ var (
 
 func LoadServices() {
 	authrRepo := cockroachdb.NewAuthenticationRepository(client)
-	authenticateService = auth.NewAuthenticateService(authrRepo)
+	authenticateService = auth.NewAuthenticateService(authrRepo, []byte(accessSecret), []byte(refreshSecret))
 }
