@@ -1,6 +1,7 @@
 package boot
 
 import (
+	"auth-service/internal/driving/http/auth"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -11,6 +12,12 @@ var (
 )
 
 func initRoutes() {
+	authrController := auth.NewController(authenticateService)
+
+	router.POST("/login", authrController.Login)
+	userGroup := router.Group("/users")
+	userGroup.POST("", authrController.Create)
+
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",

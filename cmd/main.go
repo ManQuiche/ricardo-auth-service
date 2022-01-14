@@ -8,6 +8,7 @@ import (
 func main() {
 	boot.LoadEnv()
 	boot.LoadDb()
+	boot.LoadServices()
 
 	firebase.InitFirebaseSDK()
 

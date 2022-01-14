@@ -30,7 +30,7 @@ func (r authenticationRepository) Exists(ctx context.Context, username, password
 }
 
 func (r authenticationRepository) Save(ctx context.Context, user entities.User) error {
-	r.client.Save(user)
+	r.client.Save(&user)
 
 	return nil
 }
