@@ -56,7 +56,7 @@ func (c controller) Login(gtx *gin.Context) {
 
 	tokens, err := c.authr.Login(gtx.Request.Context(), loginRequest)
 	if err != nil {
-		_ = errors2.GinErrorHandler(gtx, err, http.StatusInternalServerError)
+		_ = errors2.GinErrorHandler(gtx, err, http.StatusNotFound)
 		return
 	}
 
