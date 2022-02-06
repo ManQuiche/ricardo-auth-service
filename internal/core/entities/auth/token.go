@@ -20,3 +20,7 @@ type SignedTokenPair struct {
 }
 
 //type UserClaims
+
+type RicardoClaims struct {
+	jwt.StandardClaims
+}

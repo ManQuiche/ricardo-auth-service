@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 	"github.com/golang-jwt/jwt"
+	"strconv"
 	"time"
 )
 
@@ -41,14 +42,14 @@ func (s authenticateService) Login(ctx context.Context, loginRequest entities.Lo
 	accessTokenClaims := jwt.MapClaims{
 		"exp": time.Now().Add(time.Minute * 15).Unix(),
 		"iss": "aut",
-		"sub": user.ID,
+		"sub": strconv.Itoa(int(user.ID)),
 	}
 	signedAT, _ := tokens.GenerateHS256SignedToken(accessTokenClaims, s.accessSecret)
 
 	refreshTokenClaims := jwt.MapClaims{
 		"exp": time.Now().Add(time.Hour * 72).Unix(),
 		"iss": "aut",
-		"sub": user.ID,
+		"sub": strconv.Itoa(int(user.ID)),
 	}
 	signedRT, _ := tokens.GenerateHS256SignedToken(refreshTokenClaims, s.refreshSecret)
 

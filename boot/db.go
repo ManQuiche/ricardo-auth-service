@@ -35,4 +35,11 @@ func LoadDb() {
 	if err != nil {
 		log.Fatal("could not migrate db, exiting...")
 	}
+
+	if debug {
+		client.Create(&entities.User{
+			Username: "test_user",
+			Password: "test_password",
+		})
+	}
 }

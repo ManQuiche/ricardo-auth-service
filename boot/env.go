@@ -2,7 +2,9 @@ package boot
 
 import (
 	"auth-service/pkg/errors"
+	"log"
 	"os"
+	"strconv"
 )
 
 var (
@@ -14,9 +16,13 @@ var (
 	url           string
 	accessSecret  string
 	refreshSecret string
+
+	debug bool
 )
 
 func LoadEnv() {
+	var err error
+
 	dbHost = env("DB_HOST")
 	dbPort = env("DB_PORT")
 	dbUser = env("DB_USER")
@@ -25,6 +31,11 @@ func LoadEnv() {
 	url = env("URL")
 	accessSecret = env("ACCESS_SECRET")
 	refreshSecret = env("REFRESH_SECRET")
+	debug, err = strconv.ParseBool(env("DEBUG"))
+
+	if err != nil {
+		log.Fatal("env var DEBUG needs to be of boolean type")
+	}
 }
 
 func env(name string) string {

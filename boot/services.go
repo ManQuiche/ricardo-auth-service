@@ -6,10 +6,12 @@ import (
 )
 
 var (
-	authenticateService auth.AuthenticateService
+	authenticateService  auth.AuthenticateService
+	authorizationService auth.AuthorizeService
 )
 
 func LoadServices() {
 	authrRepo := cockroachdb.NewAuthenticationRepository(client)
 	authenticateService = auth.NewAuthenticateService(authrRepo, []byte(accessSecret), []byte(refreshSecret))
+	authorizationService = auth.NewAuhtorizeService([]byte(accessSecret), []byte(refreshSecret))
 }

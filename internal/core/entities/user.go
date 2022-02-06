@@ -13,7 +13,7 @@ type CreateUserRequest struct {
 	Password string `json:"password"`
 }
 
-// It is similar to CreateUserRequest for now, but the other struct is going to change in the future
+// LoginRequest It is similar to CreateUserRequest for now, but the other struct is going to change in the future
 type LoginRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`

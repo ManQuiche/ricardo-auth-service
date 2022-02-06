@@ -1,9 +1,12 @@
 package errors
 
-import "net/http"
+import (
+	"net/http"
+)
 
 const (
 	invalidTokenFormat = "Token format is invalid !"
+	InvalidToken       = "token in invalid"
 )
 
 func InvalidTokenFormat(w http.ResponseWriter) {

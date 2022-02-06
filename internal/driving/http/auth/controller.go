@@ -12,6 +12,7 @@ import (
 type Controller interface {
 	Create(gtx *gin.Context)
 	Login(gtx *gin.Context)
+	Refresh(gtx *gin.Context)
 }
 
 func NewController(service auth.AuthenticateService) Controller {
@@ -20,6 +21,12 @@ func NewController(service auth.AuthenticateService) Controller {
 
 type controller struct {
 	authr auth.AuthenticateService
+}
+
+func (c controller) Refresh(gtx *gin.Context) {
+	// invalidate old ?
+
+	// get new access token
 }
 
 func (c controller) Create(gtx *gin.Context) {
