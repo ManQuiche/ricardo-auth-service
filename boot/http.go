@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
+	"net/http"
 )
 
 var (
@@ -12,18 +13,17 @@ var (
 )
 
 func initRoutes() {
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-
 	authrController := auth.NewController(authenticateService)
 	router.POST("/login", authrController.Login)
 
 	// JWT Middleware definition
 	accessMiddleware := auth.NewJwtAuthMiddleware(authorizationService, false)
 	refreshMiddleware := auth.NewJwtAuthMiddleware(authorizationService, true)
+
+	// Access Token check route
+	router.GET("/access", accessMiddleware.Authorize, func(context *gin.Context) {
+		context.Status(http.StatusOK)
+	})
 
 	userGroup := router.Group("/users", accessMiddleware.Authorize)
 	userGroup.POST("", authrController.Create)
