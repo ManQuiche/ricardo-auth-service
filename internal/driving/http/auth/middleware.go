@@ -6,7 +6,6 @@ import (
 	authhttp "auth-service/pkg/http"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
@@ -29,12 +28,17 @@ func NewJwtAuthMiddleware(authz auth.AuthorizeService, refresh bool) AuthMiddlew
 func (j jwtAuthMiddleware) Authorize(gtx *gin.Context) {
 	authorized := false
 	var err error
-	token := gtx.GetHeader(authhttp.AuthorizationHeader)[len(authhttp.BearerType):]
-	log.Println(token)
-
+	token := gtx.GetHeader(authhttp.AuthorizationHeader)
 	if token == "" {
-		gtx.AbortWithStatus(http.StatusUnauthorized)
+		autherrors.GinErrorHandler(gtx, errors.New("you need to pass an access token"), http.StatusUnauthorized)
+		return
 	}
+
+	if len(token) <= len(authhttp.BearerType) {
+		autherrors.GinErrorHandler(gtx, errors.New("access token format is invalid"), http.StatusUnauthorized)
+		return
+	}
+	token = token[len(authhttp.BearerType):]
 
 	if j.refresh {
 		authorized, err = j.authz.RefreshAuthorize(gtx.Request.Context(), token)
