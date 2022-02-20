@@ -13,6 +13,11 @@ var (
 )
 
 func initRoutes() {
+	// Ready route
+	router.GET("/", func(context *gin.Context) {
+		context.Status(http.StatusOK)
+	})
+
 	authrController := auth.NewController(authenticateService)
 	router.POST("/login", authrController.Login)
 
