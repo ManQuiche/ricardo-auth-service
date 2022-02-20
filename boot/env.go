@@ -17,7 +17,8 @@ var (
 	accessSecret  string
 	refreshSecret string
 
-	debug bool
+	noFirebase bool
+	debug      bool
 )
 
 func LoadEnv() {
@@ -31,11 +32,21 @@ func LoadEnv() {
 	url = env("URL")
 	accessSecret = env("ACCESS_SECRET")
 	refreshSecret = env("REFRESH_SECRET")
-	debug, err = strconv.ParseBool(env("DEBUG"))
+	noFirebase = envBool("NO_FIREBASE")
+	debug = envBool("DEBUG")
 
 	if err != nil {
 		log.Fatal("env var DEBUG needs to be of boolean type")
 	}
+}
+
+func envBool(name string) bool {
+	res, err := strconv.ParseBool(env(name))
+	if err != nil {
+		log.Fatalf("env var %s needs to be of boolean type", name)
+	}
+
+	return res
 }
 
 func env(name string) string {
