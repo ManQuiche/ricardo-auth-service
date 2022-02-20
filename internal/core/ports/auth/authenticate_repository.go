@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"auth-service/internal/core/entities"
 	"context"
+	"ricardo/auth-service/internal/core/entities"
 )
 
 type AuthenticationRepository interface {

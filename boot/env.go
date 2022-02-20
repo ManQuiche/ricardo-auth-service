@@ -1,9 +1,9 @@
 package boot
 
 import (
-	"auth-service/pkg/errors"
 	"log"
 	"os"
+	"ricardo/auth-service/pkg/errors"
 	"strconv"
 )
 

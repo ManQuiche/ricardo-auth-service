@@ -1,14 +1,14 @@
 package boot
 
 import (
-	"auth-service/internal/core/entities"
-	"auth-service/pkg/errors"
 	"fmt"
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 	"log"
+	"ricardo/auth-service/internal/core/entities"
+	"ricardo/auth-service/pkg/errors"
 )
 
 var (

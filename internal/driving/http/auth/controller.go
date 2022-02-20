@@ -1,12 +1,12 @@
 package auth
 
 import (
-	"auth-service/internal/core/app/auth"
-	"auth-service/internal/core/entities"
-	errors2 "auth-service/pkg/errors"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"ricardo/auth-service/internal/core/app/auth"
+	"ricardo/auth-service/internal/core/entities"
+	errors2 "ricardo/auth-service/pkg/errors"
 )
 
 type Controller interface {

@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"auth-service/internal/core/entities"
-	"auth-service/internal/core/entities/auth"
 	"context"
+	"ricardo/auth-service/internal/core/entities"
+	"ricardo/auth-service/internal/core/entities/auth"
 )
 
 type Authenticate interface {

@@ -1,11 +1,11 @@
 package boot
 
 import (
-	"auth-service/internal/driving/http/auth"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"ricardo/auth-service/internal/driving/http/auth"
 )
 
 var (

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"auth-service/boot"
-	"auth-service/internal/driven/firebase"
+	"ricardo/auth-service/boot"
+	"ricardo/auth-service/internal/driven/firebase"
 )
 
 func main() {

@@ -1,12 +1,12 @@
 package auth
 
 import (
-	"auth-service/internal/core/app/auth"
-	autherrors "auth-service/pkg/errors"
-	authhttp "auth-service/pkg/http"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"ricardo/auth-service/internal/core/app/auth"
+	autherrors "ricardo/auth-service/pkg/errors"
+	authhttp "ricardo/auth-service/pkg/http"
 )
 
 type AuthMiddleware interface {
