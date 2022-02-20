@@ -1,12 +1,12 @@
 package auth
 
 import (
-	"auth-service/internal/core/entities/auth"
-	authPort "auth-service/internal/core/ports/auth"
-	errors2 "auth-service/pkg/errors"
 	"context"
 	"errors"
 	"github.com/golang-jwt/jwt"
+	"ricardo/auth-service/internal/core/entities/auth"
+	authPort "ricardo/auth-service/internal/core/ports/auth"
+	errors2 "ricardo/auth-service/pkg/errors"
 )
 
 type AuthorizeService interface {

@@ -1,11 +1,11 @@
 package auth
 
 import (
-	"auth-service/internal/driven/firebase"
-	"auth-service/pkg/errors"
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
+	"ricardo/auth-service/internal/driven/firebase"
+	"ricardo/auth-service/pkg/errors"
 	"strings"
 )
 

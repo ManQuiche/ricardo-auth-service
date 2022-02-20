@@ -1,8 +1,8 @@
 package boot
 
 import (
-	"auth-service/internal/core/app/auth"
-	"auth-service/internal/driven/db/cockroachdb"
+	"ricardo/auth-service/internal/core/app/auth"
+	"ricardo/auth-service/internal/driven/db/cockroachdb"
 )
 
 var (

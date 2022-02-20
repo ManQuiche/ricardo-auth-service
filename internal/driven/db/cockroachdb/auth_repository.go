@@ -1,11 +1,11 @@
 package cockroachdb
 
 import (
-	"auth-service/internal/core/entities"
-	"auth-service/internal/core/ports/auth"
 	"context"
 	"errors"
 	"gorm.io/gorm"
+	"ricardo/auth-service/internal/core/entities"
+	"ricardo/auth-service/internal/core/ports/auth"
 )
 
 type authenticationRepository struct {

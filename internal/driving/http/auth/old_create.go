@@ -1,10 +1,10 @@
 package auth
 
 import (
-	"auth-service/internal/core/entities"
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
+	"ricardo/auth-service/internal/core/entities"
 )
 
 func CreateUser(writer http.ResponseWriter, req *http.Request, p httprouter.Params) {
