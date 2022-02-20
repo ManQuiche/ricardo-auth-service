@@ -9,7 +9,7 @@ COPY . .
 
 RUN GO111MODULE="" CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /app/auth-service cmd/main.go
 
-ENV URL="locahost"
+ENV URL="0.0.0.0"
 ENV PORT="80"
 
 EXPOSE 80
