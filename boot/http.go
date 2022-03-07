@@ -19,21 +19,23 @@ func initRoutes() {
 	})
 
 	authrController := auth.NewController(authenticateService)
-	router.POST("/login", authrController.Login)
+
+	authRouter := router.Group("/auth")
+	authRouter.POST("/login", authrController.Login)
+	authRouter.POST("/users", authrController.Create)
 
 	// JWT Middleware definition
 	accessMiddleware := auth.NewJwtAuthMiddleware(authorizationService, false)
 	refreshMiddleware := auth.NewJwtAuthMiddleware(authorizationService, true)
 
 	// Access Token check route
-	router.GET("/access", accessMiddleware.Authorize, func(context *gin.Context) {
+	authRouter.GET("/access", accessMiddleware.Authorize, func(context *gin.Context) {
 		context.Status(http.StatusOK)
 	})
 
-	userGroup := router.Group("/users", accessMiddleware.Authorize)
-	userGroup.POST("", authrController.Create)
+	//userGroup := router.Group("/users", accessMiddleware.Authorize)
 
-	router.GET("/refresh", refreshMiddleware.Authorize, authrController.Refresh)
+	authRouter.GET("/refresh", refreshMiddleware.Authorize, authrController.Refresh)
 }
 
 func ServeHTTP() {

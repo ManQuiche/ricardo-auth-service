@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"ricardo/auth-service/internal/core/app/auth"
@@ -31,19 +30,15 @@ func (c controller) Refresh(gtx *gin.Context) {
 
 func (c controller) Create(gtx *gin.Context) {
 	var createUserRequest entities.CreateUserRequest
-	err := gtx.BindJSON(&createUserRequest)
+	err := gtx.ShouldBindJSON(&createUserRequest)
 	if err != nil {
 		_ = errors2.GinErrorHandler(gtx, err, http.StatusBadRequest)
 		return
 	}
 
-	if createUserRequest.Username == "" || createUserRequest.Password == "" {
-		_ = errors2.GinErrorHandler(gtx, errors.New("username and password cannot be null"), http.StatusBadRequest)
-		return
-	}
-
 	user := entities.User{
 		Username: createUserRequest.Username,
+		Email:    createUserRequest.Email,
 		Password: createUserRequest.Password,
 	}
 	err = c.authr.Save(gtx.Request.Context(), user)
@@ -55,7 +50,7 @@ func (c controller) Create(gtx *gin.Context) {
 
 func (c controller) Login(gtx *gin.Context) {
 	var loginRequest entities.LoginRequest
-	err := gtx.BindJSON(&loginRequest)
+	err := gtx.ShouldBindJSON(&loginRequest)
 	if err != nil {
 		_ = errors2.GinErrorHandler(gtx, err, http.StatusBadRequest)
 		return
