@@ -18,9 +18,9 @@ func NewAuthenticationRepository(client *gorm.DB) auth.AuthenticationRepository 
 	}
 }
 
-func (r authenticationRepository) Exists(ctx context.Context, username, password string) (*entities.User, error) {
+func (r authenticationRepository) Exists(ctx context.Context, email, password string) (*entities.User, error) {
 	var user *entities.User
-	r.client.Where("username = ? and password = ?", username, password).First(&user)
+	r.client.Where("username = ? and password = ?", email, password).First(&user)
 
 	if user == nil {
 		return nil, errors.New("cannot find user")

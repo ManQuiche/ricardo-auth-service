@@ -34,7 +34,7 @@ func NewAuthenticateService(repo authPort.AuthenticationRepository, accessSecret
 }
 
 func (s authenticateService) Login(ctx context.Context, loginRequest entities.LoginRequest) (*authEntities.SignedTokenPair, error) {
-	user, err := s.repo.Exists(ctx, loginRequest.Username, loginRequest.Password)
+	user, err := s.repo.Exists(ctx, loginRequest.Email, loginRequest.Password)
 	if err != nil || (*user == entities.User{}) {
 		return nil, errors.New("cannot find user")
 	}

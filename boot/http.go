@@ -22,7 +22,7 @@ func initRoutes() {
 
 	authRouter := router.Group("/auth")
 	authRouter.POST("/login", authrController.Login)
-	authRouter.POST("/users", authrController.Create)
+	authRouter.POST("/register", authrController.Create)
 
 	// JWT Middleware definition
 	accessMiddleware := auth.NewJwtAuthMiddleware(authorizationService, false)
