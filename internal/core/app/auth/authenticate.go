@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"github.com/golang-jwt/jwt"
+	tokens "gitlab.com/ricardo-public/jwt-tools/pkg"
 	"ricardo/auth-service/internal/core/entities"
 	authEntities "ricardo/auth-service/internal/core/entities/auth"
 	authPort "ricardo/auth-service/internal/core/ports/auth"
-	"ricardo/auth-service/pkg/tokens"
 	"strconv"
 	"time"
 )
