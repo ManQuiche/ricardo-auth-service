@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/golang-jwt/jwt"
-	"ricardo/auth-service/internal/core/entities/auth"
+	tokens "gitlab.com/ricardo-public/jwt-tools/pkg"
 	authPort "ricardo/auth-service/internal/core/ports/auth"
 	errors2 "ricardo/auth-service/pkg/errors"
 )
@@ -13,7 +13,7 @@ type AuthorizeService interface {
 	authPort.Authorize
 }
 
-func NewAuhtorizeService(accessSecret, refreshSecret []byte) AuthorizeService {
+func NewAuthorizeService(accessSecret, refreshSecret []byte) AuthorizeService {
 	return authorizeService{
 		accessSecret:  accessSecret,
 		refreshSecret: refreshSecret,
@@ -34,7 +34,7 @@ func (a authorizeService) RefreshAuthorize(ctx context.Context, refreshToken str
 }
 
 func (a authorizeService) authorize(ctx context.Context, token string, key []byte) (bool, error) {
-	parsedToken, err := jwt.ParseWithClaims(token, &auth.RicardoClaims{}, func(token *jwt.Token) (interface{}, error) {
+	parsedToken, err := jwt.ParseWithClaims(token, &tokens.RicardoClaims{}, func(token *jwt.Token) (interface{}, error) {
 		_, ok := token.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
 			return nil, errors.New(errors2.InvalidToken)

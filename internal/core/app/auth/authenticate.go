@@ -62,3 +62,30 @@ func (s authenticateService) Login(ctx context.Context, loginRequest entities.Lo
 func (s authenticateService) Save(ctx context.Context, user entities.User) error {
 	return s.repo.Save(ctx, user)
 }
+
+func (s authenticateService) Refresh(ctx context.Context, token string) (*authEntities.SignedTokenPair, error) {
+	pToken, err := tokens.Parse(token, s.refreshSecret)
+	if err != nil {
+		return nil, errors.New("cannot parse token")
+	}
+	rClaims := pToken.Claims.(tokens.RicardoClaims)
+
+	accessTokenClaims := jwt.MapClaims{
+		"exp": time.Now().Add(time.Minute * 15).Unix(),
+		"iss": "aut",
+		"sub": rClaims.Subject,
+	}
+	signedAT, _ := tokens.GenerateHS256SignedToken(accessTokenClaims, s.accessSecret)
+
+	refreshTokenClaims := jwt.MapClaims{
+		"exp": time.Now().Add(time.Hour * 72).Unix(),
+		"iss": "aut",
+		"sub": rClaims.Subject,
+	}
+	signedRT, _ := tokens.GenerateHS256SignedToken(refreshTokenClaims, s.refreshSecret)
+
+	return &authEntities.SignedTokenPair{
+		Access:  signedAT,
+		Refresh: signedRT,
+	}, nil
+}

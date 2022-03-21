@@ -9,4 +9,5 @@ import (
 type Authenticate interface {
 	Login(ctx context.Context, loginRequest entities.LoginRequest) (*auth.SignedTokenPair, error)
 	Save(ctx context.Context, user entities.User) error
+	Refresh(ctx context.Context, token string) (*auth.SignedTokenPair, error)
 }

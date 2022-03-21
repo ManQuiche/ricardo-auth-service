@@ -33,9 +33,9 @@ func initRoutes() {
 		context.Status(http.StatusOK)
 	})
 
-	//userGroup := router.Group("/users", accessMiddleware.Authorize)
-
 	authRouter.GET("/refresh", refreshMiddleware.Authorize, authrController.Refresh)
+
+	//userGroup := router.Group("/users", accessMiddleware.Authorize)
 }
 
 func ServeHTTP() {
