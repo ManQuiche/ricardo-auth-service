@@ -3,9 +3,9 @@ package auth
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
 	"net/http"
 	"ricardo/auth-service/internal/core/app/auth"
-	autherrors "ricardo/auth-service/pkg/errors"
 	authhttp "ricardo/auth-service/pkg/http"
 )
 
@@ -30,12 +30,12 @@ func (j jwtAuthMiddleware) Authorize(gtx *gin.Context) {
 	var err error
 	token := gtx.GetHeader(authhttp.AuthorizationHeader)
 	if token == "" {
-		autherrors.GinErrorHandler(gtx, errors.New("you need to pass an access token"), http.StatusUnauthorized)
+		ricardoErr.GinErrorHandlerWithCode(gtx, errors.New("you need to pass an access token"), http.StatusUnauthorized)
 		return
 	}
 
 	if len(token) <= len(authhttp.BearerType) {
-		autherrors.GinErrorHandler(gtx, errors.New("access token format is invalid"), http.StatusUnauthorized)
+		ricardoErr.GinErrorHandlerWithCode(gtx, errors.New("access token format is invalid"), http.StatusUnauthorized)
 		return
 	}
 	token = token[len(authhttp.BearerType):]
@@ -49,8 +49,8 @@ func (j jwtAuthMiddleware) Authorize(gtx *gin.Context) {
 	if authorized {
 		gtx.Next()
 	} else if !authorized {
-		_ = autherrors.GinErrorHandler(gtx, errors.New("access token is invalid"), http.StatusUnauthorized)
+		_ = ricardoErr.GinErrorHandlerWithCode(gtx, errors.New("access token is invalid"), http.StatusUnauthorized)
 	} else if err != nil {
-		_ = autherrors.GinErrorHandler(gtx, err, http.StatusInternalServerError)
+		_ = ricardoErr.GinErrorHandlerWithCode(gtx, err, http.StatusInternalServerError)
 	}
 }
