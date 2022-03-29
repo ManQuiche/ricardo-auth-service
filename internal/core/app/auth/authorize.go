@@ -2,11 +2,11 @@ package auth
 
 import (
 	"context"
-	"errors"
 	"github.com/golang-jwt/jwt"
+	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
 	tokens "gitlab.com/ricardo-public/jwt-tools/pkg"
 	authPort "ricardo/auth-service/internal/core/ports/auth"
-	errors2 "ricardo/auth-service/pkg/errors"
+	customRicardoErr "ricardo/auth-service/pkg/errors"
 )
 
 type AuthorizeService interface {
@@ -37,13 +37,14 @@ func (a authorizeService) authorize(ctx context.Context, token string, key []byt
 	parsedToken, err := jwt.ParseWithClaims(token, &tokens.RicardoClaims{}, func(token *jwt.Token) (interface{}, error) {
 		_, ok := token.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
-			return nil, errors.New(errors2.ErrInvalidToken)
+			return nil, ricardoErr.New(customRicardoErr.ErrInvalidToken, customRicardoErr.ErrInvalidTokenDescription)
 		}
 		return key, nil
 	})
 
 	if err != nil {
-		return false, err
+		// FIXME: ricardoErr.ErrInternal please ...
+		return false, ricardoErr.New("INTERNAL", err.Error())
 	}
 
 	return parsedToken.Valid, nil
