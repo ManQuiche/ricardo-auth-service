@@ -33,7 +33,7 @@ func initRoutes() {
 		context.Status(http.StatusOK)
 	})
 
-	authRouter.GET("/refresh", refreshMiddleware.Authorize, authrController.Refresh)
+	authRouter.POST("/refresh", refreshMiddleware.Authorize, authrController.Refresh)
 
 	//userGroup := router.Group("/users", accessMiddleware.Authorize)
 }
