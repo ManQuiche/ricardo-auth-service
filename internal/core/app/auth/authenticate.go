@@ -6,7 +6,6 @@ import (
 	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
 	tokens "gitlab.com/ricardo-public/jwt-tools/pkg"
 	"ricardo/auth-service/internal/core/entities"
-	authEntities "ricardo/auth-service/internal/core/entities/auth"
 	authPort "ricardo/auth-service/internal/core/ports/auth"
 	customRicardoErr "ricardo/auth-service/pkg/errors"
 	"strconv"
@@ -34,7 +33,7 @@ func NewAuthenticateService(repo authPort.AuthenticationRepository, accessSecret
 	}
 }
 
-func (s authenticateService) Login(ctx context.Context, loginRequest entities.LoginRequest) (*authEntities.SignedTokenPair, error) {
+func (s authenticateService) Login(ctx context.Context, loginRequest entities.LoginRequest) (*entities.SignedTokenPair, error) {
 	user, err := s.repo.Exists(ctx, loginRequest.Email, loginRequest.Password)
 	if err != nil || (*user == entities.User{}) {
 		return nil, ricardoErr.New(ricardoErr.ErrNotFound, customRicardoErr.ErrCannotFindUserDescription)
@@ -54,7 +53,7 @@ func (s authenticateService) Login(ctx context.Context, loginRequest entities.Lo
 	}
 	signedRT, _ := tokens.GenerateHS256SignedToken(refreshTokenClaims, s.refreshSecret)
 
-	return &authEntities.SignedTokenPair{
+	return &entities.SignedTokenPair{
 		Access:  signedAT,
 		Refresh: signedRT,
 	}, nil
@@ -64,7 +63,7 @@ func (s authenticateService) Save(ctx context.Context, user entities.User) error
 	return s.repo.Save(ctx, user)
 }
 
-func (s authenticateService) Refresh(ctx context.Context, token string) (*authEntities.SignedTokenPair, error) {
+func (s authenticateService) Refresh(ctx context.Context, token string) (*entities.SignedTokenPair, error) {
 	pToken, err := tokens.Parse(token, s.refreshSecret)
 	if err != nil {
 		// FIXME: 500 http code will be returned, but we wanted 401 (see ricardoErr package)
@@ -86,7 +85,7 @@ func (s authenticateService) Refresh(ctx context.Context, token string) (*authEn
 	}
 	signedRT, _ := tokens.GenerateHS256SignedToken(refreshTokenClaims, s.refreshSecret)
 
-	return &authEntities.SignedTokenPair{
+	return &entities.SignedTokenPair{
 		Access:  signedAT,
 		Refresh: signedRT,
 	}, nil
