@@ -3,6 +3,7 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
+	tokens "gitlab.com/ricardo-public/jwt-tools/pkg"
 	"net/http"
 	"ricardo/auth-service/internal/core/app/auth"
 	"ricardo/auth-service/internal/core/entities"
@@ -26,12 +27,21 @@ type controller struct {
 // @Summary Serve a new token pair
 // @Description Serve a new refresh token if the given one is good, and a new access token too
 // @Success 200 {object} entities.SignedTokenPair
-// @Failure 400 {object} ricardoErr.RicardoError
+// @Failure 401 {object} ricardoErr.RicardoError
 // @Router /auth/refresh [post]
 func (c controller) Refresh(gtx *gin.Context) {
-	// invalidate old ?
+	// TODO: invalidate old token pair
 
-	// get new access token
+	// there will be no error since the token has already been checked in the middleware
+	token, _ := tokens.ExtractTokenFromHeader(gtx.GetHeader(tokens.AuthorizationHeader))
+
+	tokenPair, err := c.authr.Refresh(gtx.Request.Context(), token)
+	if err != nil {
+		_ = ricardoErr.GinErrorHandler(gtx, ricardoErr.New("TODO: add internal server error type to error lib", err.Error()))
+		return
+	}
+
+	gtx.JSON(http.StatusOK, tokenPair)
 }
 
 func (c controller) Create(gtx *gin.Context) {
