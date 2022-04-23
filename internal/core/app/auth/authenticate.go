@@ -51,7 +51,7 @@ func (s authenticateService) Refresh(ctx context.Context, token string) (*entiti
 	if err != nil {
 		return nil, ricardoErr.New(ricardoErr.ErrForbidden, customRicardoErr.ErrInvalidTokenDescription)
 	}
-	rClaims := pToken.Claims.(tokens.RicardoClaims)
+	rClaims := pToken.Claims.(*tokens.RicardoClaims)
 
 	return s.generate(rClaims.Subject), nil
 }
