@@ -37,7 +37,7 @@ func (a authorizeService) authorize(ctx context.Context, token string, key []byt
 	parsedToken, err := jwt.ParseWithClaims(token, &tokens.RicardoClaims{}, func(token *jwt.Token) (interface{}, error) {
 		_, ok := token.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
-			return nil, ricardoErr.New(customRicardoErr.ErrInvalidToken, customRicardoErr.ErrInvalidTokenDescription)
+			return nil, ricardoErr.New(ricardoErr.ErrForbidden, customRicardoErr.ErrInvalidTokenDescription)
 		}
 		return key, nil
 	})

@@ -39,24 +39,7 @@ func (s authenticateService) Login(ctx context.Context, loginRequest entities.Lo
 		return nil, ricardoErr.New(ricardoErr.ErrNotFound, customRicardoErr.ErrCannotFindUserDescription)
 	}
 
-	accessTokenClaims := jwt.MapClaims{
-		"exp": time.Now().Add(time.Minute * 15).Unix(),
-		"iss": "aut",
-		"sub": strconv.Itoa(int(user.ID)),
-	}
-	signedAT, _ := tokens.GenerateHS256SignedToken(accessTokenClaims, s.accessSecret)
-
-	refreshTokenClaims := jwt.MapClaims{
-		"exp": time.Now().Add(time.Hour * 72).Unix(),
-		"iss": "aut",
-		"sub": strconv.Itoa(int(user.ID)),
-	}
-	signedRT, _ := tokens.GenerateHS256SignedToken(refreshTokenClaims, s.refreshSecret)
-
-	return &entities.SignedTokenPair{
-		Access:  signedAT,
-		Refresh: signedRT,
-	}, nil
+	return s.generate(strconv.Itoa(int(user.ID))), nil
 }
 
 func (s authenticateService) Save(ctx context.Context, user entities.User) error {
@@ -66,27 +49,30 @@ func (s authenticateService) Save(ctx context.Context, user entities.User) error
 func (s authenticateService) Refresh(ctx context.Context, token string) (*entities.SignedTokenPair, error) {
 	pToken, err := tokens.Parse(token, s.refreshSecret)
 	if err != nil {
-		// FIXME: 500 http code will be returned, but we wanted 401 (see ricardoErr package)
-		return nil, ricardoErr.New(customRicardoErr.ErrInvalidToken, customRicardoErr.ErrInvalidTokenDescription)
+		return nil, ricardoErr.New(ricardoErr.ErrForbidden, customRicardoErr.ErrInvalidTokenDescription)
 	}
 	rClaims := pToken.Claims.(tokens.RicardoClaims)
 
+	return s.generate(rClaims.Subject), nil
+}
+
+func (s authenticateService) generate(subject string) *entities.SignedTokenPair {
 	accessTokenClaims := jwt.MapClaims{
 		"exp": time.Now().Add(time.Minute * 15).Unix(),
 		"iss": "aut",
-		"sub": rClaims.Subject,
+		"sub": subject,
 	}
 	signedAT, _ := tokens.GenerateHS256SignedToken(accessTokenClaims, s.accessSecret)
 
 	refreshTokenClaims := jwt.MapClaims{
 		"exp": time.Now().Add(time.Hour * 72).Unix(),
 		"iss": "aut",
-		"sub": rClaims.Subject,
+		"sub": subject,
 	}
 	signedRT, _ := tokens.GenerateHS256SignedToken(refreshTokenClaims, s.refreshSecret)
 
 	return &entities.SignedTokenPair{
 		Access:  signedAT,
 		Refresh: signedRT,
-	}, nil
+	}
 }
