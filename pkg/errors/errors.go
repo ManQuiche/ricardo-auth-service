@@ -1,14 +1,11 @@
 package errors
 
-import (
-	"github.com/gin-gonic/gin"
-)
+import "net/http"
 
-func GinErrorHandler(gtx *gin.Context, err error, code int) bool {
-	if err != nil {
-		_ = gtx.Error(err)
-		gtx.AbortWithStatusJSON(code, gin.H{"status": false, "message": err.Error()})
-		return true
-	}
-	return false
-}
+const (
+	ErrInvalidToken            = "INVALID_TOKEN"
+	ErrInvalidTokenCode        = http.StatusUnauthorized
+	ErrInvalidTokenDescription = "token is invalid"
+
+	ErrCannotFindUserDescription = "cannot find user"
+)

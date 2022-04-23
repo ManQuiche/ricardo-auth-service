@@ -2,12 +2,13 @@ package auth
 
 import (
 	"context"
-	"errors"
 	"github.com/golang-jwt/jwt"
+	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
 	tokens "gitlab.com/ricardo-public/jwt-tools/pkg"
 	"ricardo/auth-service/internal/core/entities"
 	authEntities "ricardo/auth-service/internal/core/entities/auth"
 	authPort "ricardo/auth-service/internal/core/ports/auth"
+	customRicardoErr "ricardo/auth-service/pkg/errors"
 	"strconv"
 	"time"
 )
@@ -36,7 +37,7 @@ func NewAuthenticateService(repo authPort.AuthenticationRepository, accessSecret
 func (s authenticateService) Login(ctx context.Context, loginRequest entities.LoginRequest) (*authEntities.SignedTokenPair, error) {
 	user, err := s.repo.Exists(ctx, loginRequest.Email, loginRequest.Password)
 	if err != nil || (*user == entities.User{}) {
-		return nil, errors.New("cannot find user")
+		return nil, ricardoErr.New(ricardoErr.ErrNotFound, customRicardoErr.ErrCannotFindUserDescription)
 	}
 
 	accessTokenClaims := jwt.MapClaims{
@@ -66,7 +67,8 @@ func (s authenticateService) Save(ctx context.Context, user entities.User) error
 func (s authenticateService) Refresh(ctx context.Context, token string) (*authEntities.SignedTokenPair, error) {
 	pToken, err := tokens.Parse(token, s.refreshSecret)
 	if err != nil {
-		return nil, errors.New("cannot parse token")
+		// FIXME: 500 http code will be returned, but we wanted 401 (see ricardoErr package)
+		return nil, ricardoErr.New(customRicardoErr.ErrInvalidToken, customRicardoErr.ErrInvalidTokenDescription)
 	}
 	rClaims := pToken.Claims.(tokens.RicardoClaims)
 

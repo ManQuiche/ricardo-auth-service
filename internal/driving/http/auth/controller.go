@@ -2,10 +2,10 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
+	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
 	"net/http"
 	"ricardo/auth-service/internal/core/app/auth"
 	"ricardo/auth-service/internal/core/entities"
-	errors2 "ricardo/auth-service/pkg/errors"
 )
 
 type Controller interface {
@@ -32,7 +32,7 @@ func (c controller) Create(gtx *gin.Context) {
 	var createUserRequest entities.CreateUserRequest
 	err := gtx.ShouldBindJSON(&createUserRequest)
 	if err != nil {
-		_ = errors2.GinErrorHandler(gtx, err, http.StatusBadRequest)
+		_ = ricardoErr.GinErrorHandlerWithCode(gtx, err, http.StatusBadRequest)
 		return
 	}
 
@@ -43,7 +43,7 @@ func (c controller) Create(gtx *gin.Context) {
 	}
 	err = c.authr.Save(gtx.Request.Context(), user)
 	if err != nil {
-		_ = errors2.GinErrorHandler(gtx, err, http.StatusInternalServerError)
+		_ = ricardoErr.GinErrorHandlerWithCode(gtx, err, http.StatusInternalServerError)
 		return
 	}
 }
@@ -52,13 +52,13 @@ func (c controller) Login(gtx *gin.Context) {
 	var loginRequest entities.LoginRequest
 	err := gtx.ShouldBindJSON(&loginRequest)
 	if err != nil {
-		_ = errors2.GinErrorHandler(gtx, err, http.StatusBadRequest)
+		_ = ricardoErr.GinErrorHandlerWithCode(gtx, err, http.StatusBadRequest)
 		return
 	}
 
 	tokens, err := c.authr.Login(gtx.Request.Context(), loginRequest)
 	if err != nil {
-		_ = errors2.GinErrorHandler(gtx, err, http.StatusNotFound)
+		_ = ricardoErr.GinErrorHandlerWithCode(gtx, err, http.StatusNotFound)
 		return
 	}
 
