@@ -373,8 +373,8 @@ github.com/yuin/goldmark v1.4.0/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1
 github.com/zenazn/goji v0.9.0/go.mod h1:7S9M489iMyHBNxwZnk9/EHS098H4/F6TATF2mIxtB1Q=
 gitlab.com/ricardo-public/errors v1.0.4 h1:vsQN5x6IyA1W/0zgEP/T5BB1SaeGO9oPaYXbubUyKfo=
 gitlab.com/ricardo-public/errors v1.0.4/go.mod h1:yK247M2lKZoapVm8CMQ1lm1utfG3Kv7gH4g6xoPgwSY=
-gitlab.com/ricardo-public/jwt-tools v1.0.2 h1:qoWC0i90MiMhjyP2b3qwikSMiCppbfPWjZCWkR1qkAc=
-gitlab.com/ricardo-public/jwt-tools v1.0.2/go.mod h1:z0YPWYA8DmtDDpHtI5tjIsHeqRCftcYGpiyRHiOdmhY=
+gitlab.com/ricardo-public/jwt-tools v1.1.1 h1:iRrDuYZocUg1Qp+285Zy4GHkyWwAdnn80EEhhLwOTMU=
+gitlab.com/ricardo-public/jwt-tools v1.1.1/go.mod h1:z0YPWYA8DmtDDpHtI5tjIsHeqRCftcYGpiyRHiOdmhY=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
 go.opencensus.io v0.22.0/go.mod h1:+kGneAE2xo2IficOXnaByMWTGM9T73dGwxeWcUqIpI8=
 go.opencensus.io v0.22.2/go.mod h1:yxeiOL68Rb0Xd1ddK5vPZ/oVn4vY4Ynel7k9FzqtOIw=
