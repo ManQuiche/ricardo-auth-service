@@ -58,16 +58,18 @@ func (s authenticateService) Refresh(ctx context.Context, token string) (*entiti
 
 func (s authenticateService) generate(subject string) *entities.SignedTokenPair {
 	accessTokenClaims := jwt.MapClaims{
-		"exp": time.Now().Add(time.Minute * 15).Unix(),
-		"iss": "aut",
-		"sub": subject,
+		"exp":  time.Now().Add(time.Minute * 15).Unix(),
+		"iss":  "aut",
+		"sub":  subject,
+		"role": "user",
 	}
 	signedAT, _ := tokens.GenerateHS256SignedToken(accessTokenClaims, s.accessSecret)
 
 	refreshTokenClaims := jwt.MapClaims{
-		"exp": time.Now().Add(time.Hour * 72).Unix(),
-		"iss": "aut",
-		"sub": subject,
+		"exp":  time.Now().Add(time.Hour * 72).Unix(),
+		"iss":  "aut",
+		"sub":  subject,
+		"role": "user",
 	}
 	signedRT, _ := tokens.GenerateHS256SignedToken(refreshTokenClaims, s.refreshSecret)
 
