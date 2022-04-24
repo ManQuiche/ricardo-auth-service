@@ -43,6 +43,11 @@ func (s authenticateService) Login(ctx context.Context, loginRequest entities.Lo
 }
 
 func (s authenticateService) Save(ctx context.Context, user entities.User) error {
+	existingUser, _ := s.repo.EmailExists(ctx, user.Email)
+	if existingUser != nil {
+		return ricardoErr.New(ricardoErr.ErrForbidden, "user already exists")
+	}
+
 	return s.repo.Save(ctx, user)
 }
 
