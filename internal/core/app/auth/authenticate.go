@@ -36,7 +36,7 @@ func NewAuthenticateService(repo authPort.AuthenticationRepository, accessSecret
 func (s authenticateService) Login(ctx context.Context, loginRequest entities.LoginRequest) (*entities.SignedTokenPair, error) {
 	user, err := s.repo.Exists(ctx, loginRequest.Email, loginRequest.Password)
 	if err != nil || (*user == entities.User{}) {
-		return nil, ricardoErr.New(ricardoErr.ErrNotFound, customRicardoErr.ErrCannotFindUserDescription)
+		return nil, ricardoErr.New(ricardoErr.ErrUnauthorized, customRicardoErr.ErrCannotFindUserDescription)
 	}
 
 	return s.generate(strconv.Itoa(int(user.ID))), nil
@@ -54,7 +54,7 @@ func (s authenticateService) Save(ctx context.Context, user entities.User) error
 func (s authenticateService) Refresh(ctx context.Context, token string) (*entities.SignedTokenPair, error) {
 	pToken, err := tokens.Parse(token, s.refreshSecret)
 	if err != nil {
-		return nil, ricardoErr.New(ricardoErr.ErrForbidden, customRicardoErr.ErrInvalidTokenDescription)
+		return nil, ricardoErr.New(ricardoErr.ErrUnauthorized, customRicardoErr.ErrInvalidTokenDescription)
 	}
 	rClaims := pToken.Claims.(*tokens.RicardoClaims)
 
