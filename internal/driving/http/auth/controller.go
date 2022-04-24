@@ -81,7 +81,7 @@ func (c controller) Login(gtx *gin.Context) {
 
 	tokens, err := c.authr.Login(gtx.Request.Context(), loginRequest)
 	if err != nil {
-		_ = ricardoErr.GinErrorHandler(gtx, ricardoErr.New("TODO: add internal server error type to error lib", err.Error()))
+		_ = ricardoErr.GinErrorHandler(gtx, err)
 		return
 	}
 
