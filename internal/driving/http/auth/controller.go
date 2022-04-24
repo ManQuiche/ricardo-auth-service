@@ -44,6 +44,13 @@ func (c controller) Refresh(gtx *gin.Context) {
 	gtx.JSON(http.StatusOK, tokenPair)
 }
 
+// Create
+// @Summary Create a new user
+// @Description Create a new user
+// @Success 200
+// @Failure 400 {object} ricardoErr.RicardoError
+// @Failure 403 {object} ricardoErr.RicardoError
+// @Router /auth/register [post]
 func (c controller) Create(gtx *gin.Context) {
 	var createUserRequest entities.CreateUserRequest
 	err := gtx.ShouldBindJSON(&createUserRequest)
@@ -59,7 +66,7 @@ func (c controller) Create(gtx *gin.Context) {
 	}
 	err = c.authr.Save(gtx.Request.Context(), user)
 	if err != nil {
-		_ = ricardoErr.GinErrorHandler(gtx, ricardoErr.New("TODO: add internal server error type to error lib", err.Error()))
+		_ = ricardoErr.GinErrorHandler(gtx, err)
 		return
 	}
 }
