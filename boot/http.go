@@ -52,7 +52,7 @@ func initRoutes() {
 		context.Status(http.StatusOK)
 	})
 
-	authRouter.POST("/refresh", refreshMiddleware.Authorize, authrController.Refresh)
+	authRouter.GET("/refresh", refreshMiddleware.Authorize, authrController.Refresh)
 }
 
 func ServeHTTP() {
