@@ -18,7 +18,7 @@ var (
 
 func LoadServices() {
 
-	natsConn, err := nats.Connect(fmt.Sprintf("broker://%s:%s@%s", natsUsr, natsPwd, natsURL))
+	natsConn, err := nats.Connect(fmt.Sprintf("nats://%s:%s@%s", natsUsr, natsPwd, natsURL))
 	if err != nil {
 		log.Fatal(err)
 	}
