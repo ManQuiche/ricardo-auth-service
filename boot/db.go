@@ -33,6 +33,7 @@ func LoadDb() {
 		client.Create(&entities.User{
 			Username: "test_user",
 			Password: "test_password",
+			Email:    "test@test.fr",
 		})
 	}
 }
