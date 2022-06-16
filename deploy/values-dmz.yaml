@@ -25,6 +25,10 @@ configs:
   REFRESH_SECRET: "5ohcPtNzLdbRVpY4W1lk7i1P4yc5M+KoHyun6vmMy4Oq4DXk4JsMjRuaPNrADU0OdWWtAV4iaZSPYB67lCGjriPGsEjGZZyoUsI1IV7wzLSdD0iAHDeqUIg0A8jhQVr6aEu9mikrOv5gvvHmFK498foRCDWu7GAJR8Ja3Elim5WTn/BJgHRITHFHlWMHJvqpzy4nM2wfD041C+V595dxYE2/BlQ9zOJz/TK6lQFXEF9C1P+ylKO8mfRWZGkKJwH1W0Xj6BSZNYCzPnRyE6XSjnmXC9mofkl4cml3Sc36vT/REpBeIvuRijSsgMl72h1nSLCNRY/d5hk1FaZdX5ADqw=="
   DEBUG: "true"
   NO_FIREBASE: "true"
+  NATS_URL: "nats://nats:4222"
+  NATS_USR: ricardo
+  NATS_PWD: ricardo
+  NATS_REGISTER_TOPIC: "ricardo.UserCreated"
 
 serviceAccount:
   # Specifies whether a service account should be created

@@ -8,36 +8,40 @@ import (
 )
 
 var (
+	accessSecret  string
 	dbHost        string
+	dbPassword    string
 	dbPort        string
 	dbUser        string
-	dbPassword    string
 	port          string
-	url           string
-	accessSecret  string
 	refreshSecret string
+	url           string
+
+	natsURL           string
+	natsUsr           string
+	natsPwd           string
+	natsRegisterTopic string
 
 	noFirebase bool
 	debug      bool
 )
 
 func LoadEnv() {
-	var err error
-
+	accessSecret = env("ACCESS_SECRET")
 	dbHost = env("DB_HOST")
+	dbPassword = env("DB_PASSWORD")
 	dbPort = env("DB_PORT")
 	dbUser = env("DB_USER")
-	dbPassword = env("DB_PASSWORD")
-	port = env("PORT")
-	url = env("URL")
-	accessSecret = env("ACCESS_SECRET")
-	refreshSecret = env("REFRESH_SECRET")
-	noFirebase = envBool("NO_FIREBASE")
 	debug = envBool("DEBUG")
+	noFirebase = envBool("NO_FIREBASE")
+	port = env("PORT")
+	refreshSecret = env("REFRESH_SECRET")
+	url = env("URL")
 
-	if err != nil {
-		log.Fatal("env var DEBUG needs to be of boolean type")
-	}
+	natsURL = env("NATS_URL")
+	natsUsr = env("NATS_USR")
+	natsPwd = env("NATS_PWD")
+	natsRegisterTopic = env("NATS_REGISTER_TOPIC")
 }
 
 func envBool(name string) bool {

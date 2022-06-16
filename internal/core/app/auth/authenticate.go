@@ -18,6 +18,7 @@ type AuthenticateService interface {
 
 type authenticateService struct {
 	repo          authPort.AuthenticationRepository
+	notifier      authPort.RegisterNotifier
 	accessSecret  []byte
 	refreshSecret []byte
 	// Expiration in minutes
@@ -25,9 +26,10 @@ type authenticateService struct {
 	//refreshTokenExp uint16
 }
 
-func NewAuthenticateService(repo authPort.AuthenticationRepository, accessSecret, refreshSecret []byte) AuthenticateService {
+func NewAuthenticateService(repo authPort.AuthenticationRepository, notifier authPort.RegisterNotifier, accessSecret, refreshSecret []byte) AuthenticateService {
 	return authenticateService{
 		repo:          repo,
+		notifier:      notifier,
 		accessSecret:  accessSecret,
 		refreshSecret: refreshSecret,
 	}
@@ -48,7 +50,12 @@ func (s authenticateService) Save(ctx context.Context, user entities.User) error
 		return ricardoErr.New(ricardoErr.ErrForbidden, "user already exists")
 	}
 
-	return s.repo.Save(ctx, user)
+	err := s.repo.Save(ctx, user)
+	if err == nil {
+		_ = s.notifier.Notify(user)
+	}
+
+	return err
 }
 
 func (s authenticateService) Refresh(ctx context.Context, token string) (*entities.SignedTokenPair, error) {
