@@ -1,14 +1,6 @@
 package errors
 
-import (
-	"github.com/gin-gonic/gin"
+const (
+	ErrInvalidTokenDescription   = "token is invalid"
+	ErrCannotFindUserDescription = "cannot find user"
 )
-
-func GinErrorHandler(gtx *gin.Context, err error, code int) bool {
-	if err != nil {
-		_ = gtx.Error(err)
-		gtx.AbortWithStatusJSON(code, gin.H{"status": false, "message": err.Error()})
-		return true
-	}
-	return false
-}

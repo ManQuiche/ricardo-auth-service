@@ -2,12 +2,12 @@ package auth
 
 import (
 	"context"
-	"errors"
 	"github.com/golang-jwt/jwt"
+	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
 	tokens "gitlab.com/ricardo-public/jwt-tools/pkg"
 	"ricardo/auth-service/internal/core/entities"
-	authEntities "ricardo/auth-service/internal/core/entities/auth"
 	authPort "ricardo/auth-service/internal/core/ports/auth"
+	customRicardoErr "ricardo/auth-service/pkg/errors"
 	"strconv"
 	"time"
 )
@@ -33,59 +33,53 @@ func NewAuthenticateService(repo authPort.AuthenticationRepository, accessSecret
 	}
 }
 
-func (s authenticateService) Login(ctx context.Context, loginRequest entities.LoginRequest) (*authEntities.SignedTokenPair, error) {
+func (s authenticateService) Login(ctx context.Context, loginRequest entities.LoginRequest) (*entities.SignedTokenPair, error) {
 	user, err := s.repo.Exists(ctx, loginRequest.Email, loginRequest.Password)
 	if err != nil || (*user == entities.User{}) {
-		return nil, errors.New("cannot find user")
+		return nil, ricardoErr.New(ricardoErr.ErrUnauthorized, customRicardoErr.ErrCannotFindUserDescription)
 	}
 
-	accessTokenClaims := jwt.MapClaims{
-		"exp": time.Now().Add(time.Minute * 15).Unix(),
-		"iss": "aut",
-		"sub": strconv.Itoa(int(user.ID)),
-	}
-	signedAT, _ := tokens.GenerateHS256SignedToken(accessTokenClaims, s.accessSecret)
-
-	refreshTokenClaims := jwt.MapClaims{
-		"exp": time.Now().Add(time.Hour * 72).Unix(),
-		"iss": "aut",
-		"sub": strconv.Itoa(int(user.ID)),
-	}
-	signedRT, _ := tokens.GenerateHS256SignedToken(refreshTokenClaims, s.refreshSecret)
-
-	return &authEntities.SignedTokenPair{
-		Access:  signedAT,
-		Refresh: signedRT,
-	}, nil
+	return s.generate(strconv.Itoa(int(user.ID))), nil
 }
 
 func (s authenticateService) Save(ctx context.Context, user entities.User) error {
+	existingUser, _ := s.repo.EmailExists(ctx, user.Email)
+	if existingUser != nil {
+		return ricardoErr.New(ricardoErr.ErrForbidden, "user already exists")
+	}
+
 	return s.repo.Save(ctx, user)
 }
 
-func (s authenticateService) Refresh(ctx context.Context, token string) (*authEntities.SignedTokenPair, error) {
+func (s authenticateService) Refresh(ctx context.Context, token string) (*entities.SignedTokenPair, error) {
 	pToken, err := tokens.Parse(token, s.refreshSecret)
 	if err != nil {
-		return nil, errors.New("cannot parse token")
+		return nil, ricardoErr.New(ricardoErr.ErrUnauthorized, customRicardoErr.ErrInvalidTokenDescription)
 	}
-	rClaims := pToken.Claims.(tokens.RicardoClaims)
+	rClaims := pToken.Claims.(*tokens.RicardoClaims)
 
+	return s.generate(rClaims.Subject), nil
+}
+
+func (s authenticateService) generate(subject string) *entities.SignedTokenPair {
 	accessTokenClaims := jwt.MapClaims{
-		"exp": time.Now().Add(time.Minute * 15).Unix(),
-		"iss": "aut",
-		"sub": rClaims.Subject,
+		"exp":  time.Now().Add(time.Minute * 15).Unix(),
+		"iss":  "aut",
+		"sub":  subject,
+		"role": "user",
 	}
 	signedAT, _ := tokens.GenerateHS256SignedToken(accessTokenClaims, s.accessSecret)
 
 	refreshTokenClaims := jwt.MapClaims{
-		"exp": time.Now().Add(time.Hour * 72).Unix(),
-		"iss": "aut",
-		"sub": rClaims.Subject,
+		"exp":  time.Now().Add(time.Hour * 72).Unix(),
+		"iss":  "aut",
+		"sub":  subject,
+		"role": "user",
 	}
 	signedRT, _ := tokens.GenerateHS256SignedToken(refreshTokenClaims, s.refreshSecret)
 
-	return &authEntities.SignedTokenPair{
+	return &entities.SignedTokenPair{
 		Access:  signedAT,
 		Refresh: signedRT,
-	}, nil
+	}
 }

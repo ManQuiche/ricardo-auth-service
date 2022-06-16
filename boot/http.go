@@ -12,6 +12,21 @@ var (
 	router *gin.Engine
 )
 
+// @title auth-service
+// @version 1.0
+// @description Ricardo's auth service.
+//
+// @accept json
+// @produce json
+//
+// @contact.name   Ricardo teams
+// @contact.email  support@ricardo.net
+//
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+//
+// @BasePath  /auth
+
 func initRoutes() {
 	// Ready route
 	router.GET("/", func(context *gin.Context) {
@@ -28,14 +43,16 @@ func initRoutes() {
 	accessMiddleware := auth.NewJwtAuthMiddleware(authorizationService, false)
 	refreshMiddleware := auth.NewJwtAuthMiddleware(authorizationService, true)
 
-	// Access Token check route
+	// @Summary Serve a new token pair
+	// @Description Serve a new refresh token if the given one is good, and a new access token too
+	// @Success 200
+	// @Failure 401
+	// @Router /auth/access [post]
 	authRouter.GET("/access", accessMiddleware.Authorize, func(context *gin.Context) {
 		context.Status(http.StatusOK)
 	})
 
 	authRouter.GET("/refresh", refreshMiddleware.Authorize, authrController.Refresh)
-
-	//userGroup := router.Group("/users", accessMiddleware.Authorize)
 }
 
 func ServeHTTP() {
