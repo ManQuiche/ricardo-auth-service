@@ -14,6 +14,8 @@ import (
 var (
 	authenticateService  auth.AuthenticateService
 	authorizationService auth.AuthorizeService
+
+	natsEncConn *nats.EncodedConn
 )
 
 func LoadServices() {
@@ -22,7 +24,7 @@ func LoadServices() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	natsEncConn, err := nats.NewEncodedConn(natsConn, nats.JSON_ENCODER)
+	natsEncConn, err = nats.NewEncodedConn(natsConn, nats.JSON_ENCODER)
 
 	authrRepo := cockroachdb.NewAuthenticationRepository(client)
 	registerNotifier := ricardoNats.NewRegisterNotifier(natsEncConn, natsRegisterTopic)
