@@ -17,7 +17,8 @@ fullnameOverride: ""
 configs:
   DB_HOST: "postgres-service.ricardo-dmz.svc.cluster.local"
   DB_PORT: "5432"
-  DB_SCHEMA: ricardo
+  DB_SCHEMA: auth_service
+  DB_DATABASE: ricardo
   PORT: "80"
   URL: "0.0.0.0"
   DB_PASSWORD: "ricardo"
@@ -29,7 +30,7 @@ configs:
   NATS_URL: "nats:4222"
   NATS_USR: ricardo
   NATS_PWD: ricardo
-  NATS_REGISTER_TOPIC: "ricardo.UserCreated"
+  NATS_REGISTER_TOPIC: "ricardo.AccountCreated"
 
 serviceAccount:
   # Specifies whether a service account should be created

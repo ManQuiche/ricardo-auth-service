@@ -13,6 +13,7 @@ var (
 	dbPassword    string
 	dbPort        string
 	dbUser        string
+	dbDatabase    string
 	dbSchema      string
 	port          string
 	refreshSecret string
@@ -33,6 +34,7 @@ func LoadEnv() {
 	dbPassword = env("DB_PASSWORD")
 	dbPort = env("DB_PORT")
 	dbUser = env("DB_USER")
+	dbDatabase = env("DB_DATABASE")
 	dbSchema = env("DB_SCHEMA")
 	debug = envBool("DEBUG")
 	noFirebase = envBool("NO_FIREBASE")
