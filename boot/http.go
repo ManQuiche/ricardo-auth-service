@@ -2,10 +2,11 @@ package boot
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"ricardo/auth-service/internal/driving/http/auth"
+
+	"github.com/gin-gonic/gin"
 )
 
 var (
@@ -33,11 +34,16 @@ func initRoutes() {
 		context.Status(http.StatusOK)
 	})
 
-	authrController := auth.NewController(authenticateService)
+	authrController := auth.NewBasicController(authenticateService)
+	firebaseController := auth.NewFirebaseController(externalTokenService)
 
 	authRouter := router.Group("/auth")
 	authRouter.POST("/login", authrController.Login)
 	authRouter.POST("/register", authrController.Create)
+
+	// TODO: add a firebase controller
+	firebaseRouter := authRouter.Group("/firebase")
+	firebaseRouter.POST("/login", firebaseController.Login)
 
 	// JWT Middleware definition
 	accessMiddleware := auth.NewJwtAuthMiddleware(authorizationService, false)

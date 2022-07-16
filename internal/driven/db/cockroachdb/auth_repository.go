@@ -37,13 +37,13 @@ func (r authenticationRepository) Exists(ctx context.Context, email, password st
 	return user, nil
 }
 
-func (r authenticationRepository) Save(ctx context.Context, user entities.User) error {
+func (r authenticationRepository) Save(ctx context.Context, user entities.User) (*entities.User, error) {
 	err := r.client.Save(&user).Error
 	if err != nil {
-		return notFoundOrElseError(err)
+		return nil, notFoundOrElseError(err)
 	}
 
-	return nil
+	return &user, nil
 }
 
 func (r authenticationRepository) EmailExists(ctx context.Context, email string) (*entities.User, error) {

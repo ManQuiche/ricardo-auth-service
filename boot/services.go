@@ -14,6 +14,7 @@ import (
 var (
 	authenticateService  auth.AuthenticateService
 	authorizationService auth.AuthorizeService
+	externalTokenService auth.ExternalTokenService
 
 	natsEncConn *nats.EncodedConn
 )
@@ -27,11 +28,10 @@ func LoadServices() {
 	natsEncConn, err = nats.NewEncodedConn(natsConn, nats.JSON_ENCODER)
 
 	authrRepo := cockroachdb.NewAuthenticationRepository(client)
+	tokenRepo := firebase.NewTokenRepository(firebaseAuth)
 	registerNotifier := ricardoNats.NewRegisterNotifier(natsEncConn, natsRegisterTopic)
+
 	authenticateService = auth.NewAuthenticateService(authrRepo, registerNotifier, []byte(accessSecret), []byte(refreshSecret))
 	authorizationService = auth.NewAuthorizeService([]byte(accessSecret), []byte(refreshSecret))
-
-	if !noFirebase {
-		firebase.InitFirebaseSDK()
-	}
+	externalTokenService = auth.NewExternalTokenService(tokenRepo, authrRepo, registerNotifier, []byte(accessSecret), []byte(refreshSecret))
 }

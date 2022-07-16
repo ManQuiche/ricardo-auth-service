@@ -1,25 +1,26 @@
 package auth
 
 import (
-	"github.com/gin-gonic/gin"
-	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
-	tokens "gitlab.com/ricardo-public/jwt-tools/pkg"
 	"net/http"
 	"ricardo/auth-service/internal/core/app/auth"
 	"ricardo/auth-service/internal/core/entities"
+
+	"github.com/gin-gonic/gin"
+	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
+	tokens "gitlab.com/ricardo-public/jwt-tools/pkg"
 )
 
-type Controller interface {
+type BasicController interface {
 	Create(gtx *gin.Context)
 	Login(gtx *gin.Context)
 	Refresh(gtx *gin.Context)
 }
 
-func NewController(service auth.AuthenticateService) Controller {
-	return controller{authr: service}
+func NewBasicController(service auth.AuthenticateService) BasicController {
+	return basicController{authr: service}
 }
 
-type controller struct {
+type basicController struct {
 	authr auth.AuthenticateService
 }
 
@@ -29,7 +30,7 @@ type controller struct {
 // @Success 200 {object} entities.SignedTokenPair
 // @Failure 401 {object} ricardoErr.RicardoError
 // @Router /auth/refresh [post]
-func (c controller) Refresh(gtx *gin.Context) {
+func (c basicController) Refresh(gtx *gin.Context) {
 	// TODO: invalidate old token pair
 
 	// there will be no error since the token has already been checked in the middleware
@@ -51,7 +52,7 @@ func (c controller) Refresh(gtx *gin.Context) {
 // @Failure 400 {object} ricardoErr.RicardoError
 // @Failure 403 {object} ricardoErr.RicardoError
 // @Router /auth/register [post]
-func (c controller) Create(gtx *gin.Context) {
+func (c basicController) Create(gtx *gin.Context) {
 	var createUserRequest entities.CreateUserRequest
 	err := gtx.ShouldBindJSON(&createUserRequest)
 	if err != nil {
@@ -78,7 +79,7 @@ func (c controller) Create(gtx *gin.Context) {
 // @Failure 400 {object} ricardoErr.RicardoError
 // @Failure 404 {object} ricardoErr.RicardoError
 // @Router /auth/login [post]
-func (c controller) Login(gtx *gin.Context) {
+func (c basicController) Login(gtx *gin.Context) {
 	var loginRequest entities.LoginRequest
 	err := gtx.ShouldBindJSON(&loginRequest)
 	if err != nil {

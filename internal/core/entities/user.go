@@ -7,6 +7,8 @@ type User struct {
 	Username string `json:"username" gorm:"uniqueIndex"`
 	Email    string `json:"email" gorm:"uniqueIndex, notNull"`
 	Password string `json:"password" gorm:"notNull"`
+	// ExternalSource Must be lowercase
+	ExternalSource string `json:"external_source"`
 }
 
 type CreateUserRequest struct {
