@@ -41,7 +41,7 @@ func (s authenticateService) Login(ctx context.Context, loginRequest entities.Lo
 		return nil, ricardoErr.New(ricardoErr.ErrUnauthorized, customRicardoErr.ErrCannotFindUserDescription)
 	}
 
-	return s.generate(strconv.Itoa(int(user.ID))), nil
+	return generate(strconv.Itoa(int(user.ID)), s.accessSecret, s.refreshSecret), nil
 }
 
 func (s authenticateService) Save(ctx context.Context, user entities.User) error {
@@ -50,7 +50,7 @@ func (s authenticateService) Save(ctx context.Context, user entities.User) error
 		return ricardoErr.New(ricardoErr.ErrForbidden, "user already exists")
 	}
 
-	err := s.repo.Save(ctx, user)
+	_, err := s.repo.Save(ctx, user)
 	if err == nil {
 		_ = s.notifier.Notify(user)
 	}
@@ -65,17 +65,17 @@ func (s authenticateService) Refresh(ctx context.Context, token string) (*entiti
 	}
 	rClaims := pToken.Claims.(*tokens.RicardoClaims)
 
-	return s.generate(rClaims.Subject), nil
+	return generate(rClaims.Subject, s.accessSecret, s.refreshSecret), nil
 }
 
-func (s authenticateService) generate(subject string) *entities.SignedTokenPair {
+func generate(subject string, accessSecret, refreshSecret []byte) *entities.SignedTokenPair {
 	accessTokenClaims := jwt.MapClaims{
 		"exp":  time.Now().Add(time.Minute * 15).Unix(),
 		"iss":  "aut",
 		"sub":  subject,
 		"role": "user",
 	}
-	signedAT, _ := tokens.GenerateHS256SignedToken(accessTokenClaims, s.accessSecret)
+	signedAT, _ := tokens.GenerateHS256SignedToken(accessTokenClaims, accessSecret)
 
 	refreshTokenClaims := jwt.MapClaims{
 		"exp":  time.Now().Add(time.Hour * 72).Unix(),
@@ -83,7 +83,7 @@ func (s authenticateService) generate(subject string) *entities.SignedTokenPair 
 		"sub":  subject,
 		"role": "user",
 	}
-	signedRT, _ := tokens.GenerateHS256SignedToken(refreshTokenClaims, s.refreshSecret)
+	signedRT, _ := tokens.GenerateHS256SignedToken(refreshTokenClaims, refreshSecret)
 
 	return &entities.SignedTokenPair{
 		Access:  signedAT,
