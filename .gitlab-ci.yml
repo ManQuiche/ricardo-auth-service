@@ -2,8 +2,8 @@ include:
   - project: 'ricardo134/ci-includes'
     ref: master
     file:
-    - 'go/1.18-test.yml'
-    - 'go/1.18-lint.yml'
+    - 'go/latest-test.yml'
+    - 'go/latest-lint.yml'
     - 'go/publish.yml'
     - 'go/deploy.yml'
 
