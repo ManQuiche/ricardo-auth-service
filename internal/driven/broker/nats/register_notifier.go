@@ -2,8 +2,8 @@ package nats
 
 import (
 	"github.com/nats-io/nats.go"
-	"ricardo/auth-service/internal/core/entities"
-	"ricardo/auth-service/internal/core/ports/auth"
+	"gitlab.com/ricardo134/auth-service/internal/core/entities"
+	"gitlab.com/ricardo134/auth-service/internal/core/ports/auth"
 )
 
 type registerNotifier struct {

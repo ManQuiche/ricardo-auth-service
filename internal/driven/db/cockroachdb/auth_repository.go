@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	ricardoerr "gitlab.com/ricardo-public/errors/pkg/errors"
+	"gitlab.com/ricardo134/auth-service/internal/core/entities"
+	"gitlab.com/ricardo134/auth-service/internal/core/ports/auth"
 	"gorm.io/gorm"
-	"ricardo/auth-service/internal/core/entities"
-	"ricardo/auth-service/internal/core/ports/auth"
 )
 
 type authenticationRepository struct {

@@ -1,9 +1,9 @@
 package boot
 
 import (
+	"gitlab.com/ricardo134/auth-service/pkg/errors"
 	"log"
 	"os"
-	"ricardo/auth-service/pkg/errors"
 	"strconv"
 )
 

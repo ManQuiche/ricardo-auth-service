@@ -2,13 +2,13 @@ package boot
 
 import (
 	"fmt"
+	"gitlab.com/ricardo134/auth-service/internal/core/app/auth"
+	"gitlab.com/ricardo134/auth-service/internal/driven/db/cockroachdb"
+	"gitlab.com/ricardo134/auth-service/internal/driven/firebase"
 	"log"
-	"ricardo/auth-service/internal/core/app/auth"
-	"ricardo/auth-service/internal/driven/db/cockroachdb"
-	"ricardo/auth-service/internal/driven/firebase"
 
 	"github.com/nats-io/nats.go"
-	ricardoNats "ricardo/auth-service/internal/driven/broker/nats"
+	ricardoNats "gitlab.com/ricardo134/auth-service/internal/driven/broker/nats"
 )
 
 var (

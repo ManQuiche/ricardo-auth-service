@@ -4,7 +4,7 @@ import (
 	"context"
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
-	"ricardo/auth-service/pkg/errors"
+	"gitlab.com/ricardo134/auth-service/pkg/errors"
 )
 
 var (

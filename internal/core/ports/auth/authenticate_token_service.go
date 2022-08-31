@@ -2,7 +2,7 @@ package auth
 
 import (
 	"context"
-	"ricardo/auth-service/internal/core/entities"
+	"gitlab.com/ricardo134/auth-service/internal/core/entities"
 )
 
 type TokenAuthenticate interface {

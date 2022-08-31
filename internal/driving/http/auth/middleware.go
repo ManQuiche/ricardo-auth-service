@@ -4,9 +4,9 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
+	"gitlab.com/ricardo134/auth-service/internal/core/app/auth"
+	authhttp "gitlab.com/ricardo134/auth-service/pkg/http"
 	"net/http"
-	"ricardo/auth-service/internal/core/app/auth"
-	authhttp "ricardo/auth-service/pkg/http"
 )
 
 type AuthMiddleware interface {

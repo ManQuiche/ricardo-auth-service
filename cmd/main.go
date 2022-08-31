@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ricardo/auth-service/boot"
+	"gitlab.com/ricardo134/auth-service/boot"
 )
 
 func main() {

@@ -1,9 +1,9 @@
 package auth
 
 import (
+	"gitlab.com/ricardo134/auth-service/internal/core/app/auth"
+	"gitlab.com/ricardo134/auth-service/internal/core/entities"
 	"net/http"
-	"ricardo/auth-service/internal/core/app/auth"
-	"ricardo/auth-service/internal/core/entities"
 
 	"github.com/gin-gonic/gin"
 	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"

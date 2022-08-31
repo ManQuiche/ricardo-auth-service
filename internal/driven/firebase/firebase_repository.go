@@ -2,10 +2,10 @@ package firebase
 
 import (
 	"context"
+	"gitlab.com/ricardo134/auth-service/internal/core/entities"
 	"log"
-	"ricardo/auth-service/internal/core/entities"
 
-	"ricardo/auth-service/internal/core/ports/auth"
+	"gitlab.com/ricardo134/auth-service/internal/core/ports/auth"
 
 	fireAuth "firebase.google.com/go/auth"
 )

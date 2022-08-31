@@ -2,9 +2,9 @@ package boot
 
 import (
 	"fmt"
+	"gitlab.com/ricardo134/auth-service/internal/driving/http/auth"
 	"log"
 	"net/http"
-	"ricardo/auth-service/internal/driving/http/auth"
 
 	"github.com/gin-gonic/gin"
 )
