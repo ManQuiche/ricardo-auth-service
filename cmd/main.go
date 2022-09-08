@@ -7,7 +7,9 @@ import (
 func main() {
 	boot.LoadEnv()
 	boot.LoadDb()
+	boot.InitFirebaseApp()
 	boot.LoadServices()
+	//boot.LoadAdditionalData()
 
 	boot.ServeHTTP()
 }

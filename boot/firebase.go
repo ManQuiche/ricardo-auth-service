@@ -5,6 +5,7 @@ import (
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"gitlab.com/ricardo134/auth-service/pkg/errors"
+	option2 "google.golang.org/api/option"
 )
 
 var (
@@ -14,7 +15,8 @@ var (
 
 func InitFirebaseApp() {
 	var err error
-	firebaseApp, err = firebase.NewApp(context.Background(), nil)
+	option := option2.WithCredentialsFile("boot/ricardo-9b5d5-firebase-adminsdk-udnxf-2e4b3b051f.json")
+	firebaseApp, err = firebase.NewApp(context.Background(), nil, option)
 	if err != nil {
 		errors.CannotInitFirebaseApp()
 	}

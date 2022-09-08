@@ -8,9 +8,12 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/lib/pq v1.10.4
 	github.com/nats-io/nats.go v1.16.0
+	github.com/pkg/errors v0.8.1
 	github.com/swaggo/swag v1.8.5
 	gitlab.com/ricardo-public/errors v1.0.4
 	gitlab.com/ricardo-public/jwt-tools v1.1.1
+	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
+	google.golang.org/api v0.58.0
 	gorm.io/driver/postgres v1.2.3
 	gorm.io/gorm v1.22.4
 )
@@ -56,14 +59,12 @@ require (
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/ugorji/go/codec v1.2.6 // indirect
 	go.opencensus.io v0.23.0 // indirect
-	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd // indirect
 	golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4 // indirect
 	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1 // indirect
 	golang.org/x/sys v0.0.0-20220111092808-5a964db01320 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.10 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
-	google.golang.org/api v0.58.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20210924002016-3dee208752a0 // indirect
 	google.golang.org/grpc v1.40.0 // indirect
