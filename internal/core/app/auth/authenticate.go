@@ -8,9 +8,13 @@ import (
 	"gitlab.com/ricardo134/auth-service/internal/core/entities"
 	authPort "gitlab.com/ricardo134/auth-service/internal/core/ports/auth"
 	customRicardoErr "gitlab.com/ricardo134/auth-service/pkg/errors"
+	"golang.org/x/crypto/bcrypt"
 	"strconv"
 	"time"
 )
+
+// bcryptCost set as 13 gives approximately 480 ms to hash a password with my work computer
+const bcryptCost int = 13
 
 type AuthenticateService interface {
 	authPort.Authenticate
@@ -36,8 +40,13 @@ func NewAuthenticateService(repo authPort.AuthenticationRepository, notifier aut
 }
 
 func (s authenticateService) Login(ctx context.Context, loginRequest entities.LoginRequest) (*entities.SignedTokenPair, error) {
-	user, err := s.repo.Exists(ctx, loginRequest.Email, loginRequest.Password)
+	user, err := s.repo.EmailExists(ctx, loginRequest.Email)
 	if err != nil || (*user == entities.User{}) {
+		return nil, ricardoErr.New(ricardoErr.ErrUnauthorized, customRicardoErr.ErrCannotFindUserDescription)
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginRequest.Password))
+	if err != nil {
 		return nil, ricardoErr.New(ricardoErr.ErrUnauthorized, customRicardoErr.ErrCannotFindUserDescription)
 	}
 
@@ -50,7 +59,13 @@ func (s authenticateService) Save(ctx context.Context, user entities.User) error
 		return ricardoErr.New(ricardoErr.ErrForbidden, "user already exists")
 	}
 
-	_, err := s.repo.Save(ctx, user)
+	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcryptCost)
+	if err != nil {
+		return ricardoErr.New(ricardoErr.ErrNotFound, "could not hash password")
+	}
+	user.Password = string(hash)
+
+	_, err = s.repo.Save(ctx, user)
 	if err == nil {
 		_ = s.notifier.Notify(user)
 	}

@@ -2,10 +2,10 @@ package auth
 
 import (
 	"context"
+	errors2 "github.com/pkg/errors"
 	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
 	"gitlab.com/ricardo134/auth-service/internal/core/entities"
 	authPort "gitlab.com/ricardo134/auth-service/internal/core/ports/auth"
-	customRicardoErr "gitlab.com/ricardo134/auth-service/pkg/errors"
 	"strconv"
 )
 
@@ -40,7 +40,7 @@ func NewExternalTokenService(
 func (e externalTokenService) Verify(ctx context.Context, token string) (*entities.SignedTokenPair, error) {
 	user, err := e.tokenRepo.Verify(ctx, token)
 	if err != nil {
-		return nil, ricardoErr.New(ricardoErr.ErrUnauthorized, customRicardoErr.ErrCannotFindUserDescription)
+		return nil, ricardoErr.New(ricardoErr.ErrUnauthorized, errors2.Wrap(err, "can't find user").Error())
 	}
 
 	existingUser, err := e.authRepo.EmailExists(ctx, user.Email)

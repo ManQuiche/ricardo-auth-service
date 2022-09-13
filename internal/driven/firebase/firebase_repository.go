@@ -25,7 +25,7 @@ func NewTokenRepository(firebaseClient *fireAuth.Client) TokenRepository {
 }
 
 func (t tokenRepository) Verify(ctx context.Context, token string) (*entities.User, error) {
-	fToken, err := t.firebaseClient.VerifyIDTokenAndCheckRevoked(ctx, token)
+	fToken, err := t.firebaseClient.VerifyIDToken(ctx, token)
 
 	if err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func (t tokenRepository) Verify(ctx context.Context, token string) (*entities.Us
 
 	return &entities.User{
 		// TODO: check if Subject is really an email
-		Email:          fToken.Subject,
+		Email:          fToken.Claims["email"].(string),
 		ExternalSource: userSource,
 	}, nil
 }
