@@ -38,6 +38,7 @@ func (t tokenRepository) Verify(ctx context.Context, token string) (*entities.Us
 	return &entities.User{
 		// TODO: check if Subject is really an email
 		Email:          fToken.Claims["email"].(string),
+		Username:       fToken.Claims["name"].(string),
 		ExternalSource: userSource,
 	}, nil
 }

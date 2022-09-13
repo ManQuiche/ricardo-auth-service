@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	Username string `json:"username" gorm:"uniqueIndex"`
+	Username string `json:"username"`
 	Email    string `json:"email" gorm:"uniqueIndex, notNull"`
 	Password string `json:"password" gorm:"notNull"`
 	// ExternalSource Must be lowercase

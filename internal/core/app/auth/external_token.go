@@ -46,7 +46,7 @@ func (e externalTokenService) Verify(ctx context.Context, token string) (*entiti
 	existingUser, err := e.authRepo.EmailExists(ctx, user.Email)
 	if existingUser == nil {
 		existingUser, err = e.authRepo.Save(ctx, *user)
-		if err == nil {
+		if err != nil {
 			return nil, err
 		}
 
