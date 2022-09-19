@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
-	tokens "gitlab.com/ricardo-public/jwt-tools/pkg"
+	jwtTools "gitlab.com/ricardo-public/jwt-tools/pkg"
 )
 
 type BasicController interface {
@@ -34,7 +34,7 @@ func (c basicController) Refresh(gtx *gin.Context) {
 	// TODO: invalidate old token pair
 
 	// there will be no error since the token has already been checked in the middleware
-	token, _ := tokens.ExtractTokenFromHeader(gtx.GetHeader(tokens.AuthorizationHeader))
+	token, _ := jwtTools.ExtractTokenFromHeader(gtx.GetHeader(jwtTools.AuthorizationHeader))
 
 	tokenPair, err := c.authr.Refresh(gtx.Request.Context(), token)
 	if err != nil {
