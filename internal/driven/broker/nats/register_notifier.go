@@ -19,5 +19,5 @@ func NewRegisterNotifier(conn *nats.EncodedConn, topic string) auth.RegisterNoti
 }
 
 func (r registerNotifier) Notify(user entities.User) error {
-	return r.conn.Publish(r.topic, &user)
+	return r.conn.Publish(r.topic, &user.ID)
 }

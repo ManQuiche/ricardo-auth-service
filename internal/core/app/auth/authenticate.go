@@ -65,9 +65,9 @@ func (s authenticateService) Save(ctx context.Context, user entities.User) error
 	}
 	user.Password = string(hash)
 
-	_, err = s.repo.Save(ctx, user)
+	createdUser, err := s.repo.Save(ctx, user)
 	if err == nil {
-		_ = s.notifier.Notify(user)
+		_ = s.notifier.Notify(*createdUser)
 	}
 
 	return err
