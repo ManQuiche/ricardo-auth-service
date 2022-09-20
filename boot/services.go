@@ -3,7 +3,8 @@ package boot
 import (
 	"fmt"
 	"gitlab.com/ricardo134/auth-service/internal/core/app/auth"
-	"gitlab.com/ricardo134/auth-service/internal/driven/db/cockroachdb"
+	"gitlab.com/ricardo134/auth-service/internal/core/app/user"
+	"gitlab.com/ricardo134/auth-service/internal/driven/db/postgresql"
 	"gitlab.com/ricardo134/auth-service/internal/driven/firebase"
 	"log"
 
@@ -15,6 +16,7 @@ var (
 	authenticateService  auth.AuthenticateService
 	authorizationService auth.AuthorizeService
 	externalTokenService auth.ExternalTokenService
+	userService          user.Service
 
 	natsEncConn *nats.EncodedConn
 )
@@ -27,11 +29,13 @@ func LoadServices() {
 	}
 	natsEncConn, err = nats.NewEncodedConn(natsConn, nats.JSON_ENCODER)
 
-	authrRepo := cockroachdb.NewAuthenticationRepository(client)
+	authrRepo := postgresql.NewAuthenticationRepository(client)
+	userRepo := postgresql.NewUserRepository(client)
 	tokenRepo := firebase.NewTokenRepository(firebaseAuth)
 	registerNotifier := ricardoNats.NewRegisterNotifier(natsEncConn, natsRegisterTopic)
 
 	authenticateService = auth.NewAuthenticateService(authrRepo, registerNotifier, []byte(accessSecret), []byte(refreshSecret))
 	authorizationService = auth.NewAuthorizeService([]byte(accessSecret), []byte(refreshSecret))
 	externalTokenService = auth.NewExternalTokenService(tokenRepo, authrRepo, registerNotifier, []byte(accessSecret), []byte(refreshSecret))
+	userService = user.NewUserService(userRepo)
 }

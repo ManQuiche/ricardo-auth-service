@@ -22,3 +22,17 @@ type LoginRequest struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
+
+type GetUserRequest struct {
+	ID uint `json:"ID" binding:"required"`
+}
+
+type UpdateUserRequest struct {
+	ID       uint   `json:"ID" binding:"required"`
+	Username string `json:"username,omitempty"`
+	Email    string `json:"email,omitempty"`
+}
+
+type DeleteUserRequest struct {
+	ID uint `json:"ID" binding:"required"`
+}

@@ -1,9 +1,7 @@
-package cockroachdb
+package postgresql
 
 import (
 	"context"
-	"errors"
-	ricardoerr "gitlab.com/ricardo-public/errors/pkg/errors"
 	"gitlab.com/ricardo134/auth-service/internal/core/entities"
 	"gitlab.com/ricardo134/auth-service/internal/core/ports/auth"
 	"gorm.io/gorm"
@@ -17,14 +15,6 @@ func NewAuthenticationRepository(client *gorm.DB) auth.AuthenticationRepository 
 	return authenticationRepository{
 		client: client,
 	}
-}
-
-func notFoundOrElseError(err error) error {
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return ricardoerr.New(ricardoerr.ErrNotFound, "record not found")
-	}
-
-	return ricardoerr.New(ricardoerr.ErrDatabaseError, err.Error())
 }
 
 func (r authenticationRepository) Exists(ctx context.Context, email, password string) (*entities.User, error) {

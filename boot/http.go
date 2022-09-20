@@ -3,6 +3,7 @@ package boot
 import (
 	"fmt"
 	"gitlab.com/ricardo134/auth-service/internal/driving/http/auth"
+	"gitlab.com/ricardo134/auth-service/internal/driving/http/user"
 	"log"
 	"net/http"
 
@@ -35,13 +36,19 @@ func initRoutes() {
 	authrController := auth.NewBasicController(authenticateService)
 	firebaseController := auth.NewFirebaseController(externalTokenService)
 
+	userController := user.NewController(userService)
+
 	authRouter := router.Group("/auth")
 	authRouter.POST("/login", authrController.Login)
 	authRouter.POST("/register", authrController.Create)
 
-	// TODO: add a firebase controller
 	firebaseRouter := authRouter.Group("/firebase")
 	firebaseRouter.POST("/login", firebaseController.Login)
+
+	usrRouter := router.Group("/user")
+	usrRouter.GET("", userController.Get)
+	usrRouter.PATCH("", userController.Update)
+	usrRouter.DELETE("", userController.Delete)
 
 	// JWT Middleware definition
 	accessMiddleware := auth.NewJwtAuthMiddleware(authorizationService, false)
