@@ -4,7 +4,7 @@ import (
 	"context"
 	errors2 "github.com/pkg/errors"
 	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
-	"gitlab.com/ricardo134/auth-service/internal/core/entities"
+	tokens "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
 	authPort "gitlab.com/ricardo134/auth-service/internal/core/ports/auth"
 	"strconv"
 )
@@ -37,7 +37,7 @@ func NewExternalTokenService(
 	}
 }
 
-func (e externalTokenService) Verify(ctx context.Context, token string) (*entities.SignedTokenPair, error) {
+func (e externalTokenService) Verify(ctx context.Context, token string) (*tokens.SignedTokens, error) {
 	user, err := e.tokenRepo.Verify(ctx, token)
 	if err != nil {
 		return nil, ricardoErr.New(ricardoErr.ErrUnauthorized, errors2.Wrap(err, "can't find user").Error())
@@ -53,5 +53,5 @@ func (e externalTokenService) Verify(ctx context.Context, token string) (*entiti
 		_ = e.notifier.Notify(*existingUser)
 	}
 
-	return generate(strconv.Itoa(int(existingUser.ID)), e.accessSecret, e.refreshSecret), nil
+	return generate(strconv.Itoa(int(existingUser.ID)), tokens.UserRole, e.accessSecret, e.refreshSecret), nil
 }

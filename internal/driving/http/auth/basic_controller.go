@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
-	jwtTools "gitlab.com/ricardo-public/jwt-tools/pkg"
+	jwtTools "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
 )
 
 type BasicController interface {
@@ -27,7 +27,7 @@ type basicController struct {
 // Refresh
 // @Summary Serve a new token pair
 // @Description Serve a new refresh token if the given one is good, and a new access token too
-// @Success 200 {object} entities.SignedTokenPair
+// @Success 200 {object} entities.SignedTokens
 // @Failure 401 {object} ricardoErr.RicardoError
 // @Router /auth/refresh [post]
 func (c basicController) Refresh(gtx *gin.Context) {
@@ -75,7 +75,7 @@ func (c basicController) Create(gtx *gin.Context) {
 // Login
 // @Summary Login
 // @Description Login from an email and a password
-// @Success 200 {object} entities.SignedTokenPair
+// @Success 200 {object} entities.SignedTokens
 // @Failure 400 {object} ricardoErr.RicardoError
 // @Failure 404 {object} ricardoErr.RicardoError
 // @Router /auth/login [post]

@@ -11,7 +11,7 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/swaggo/swag v1.8.5
 	gitlab.com/ricardo-public/errors v1.0.4
-	gitlab.com/ricardo-public/jwt-tools v1.1.1
+	gitlab.com/ricardo-public/jwt-tools/v2 v2.2.3
 	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
 	google.golang.org/api v0.58.0
 	gorm.io/driver/postgres v1.2.3
@@ -33,6 +33,7 @@ require (
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.9.0 // indirect
+	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect

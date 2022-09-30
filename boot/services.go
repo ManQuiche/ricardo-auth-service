@@ -9,7 +9,7 @@ import (
 	"log"
 
 	"github.com/nats-io/nats.go"
-	ricardoNats "gitlab.com/ricardo134/auth-service/internal/driven/broker/nats"
+	natsext "gitlab.com/ricardo134/auth-service/internal/driven/broker/nats"
 )
 
 var (
@@ -22,7 +22,6 @@ var (
 )
 
 func LoadServices() {
-
 	natsConn, err := nats.Connect(fmt.Sprintf("nats://%s:%s@%s", natsUsr, natsPwd, natsURL))
 	if err != nil {
 		log.Fatal(err)
@@ -32,7 +31,7 @@ func LoadServices() {
 	authrRepo := postgresql.NewAuthenticationRepository(client)
 	userRepo := postgresql.NewUserRepository(client)
 	tokenRepo := firebase.NewTokenRepository(firebaseAuth)
-	registerNotifier := ricardoNats.NewRegisterNotifier(natsEncConn, natsRegisterTopic)
+	registerNotifier := natsext.NewRegisterNotifier(natsEncConn, natsRegisterTopic)
 
 	authenticateService = auth.NewAuthenticateService(authrRepo, registerNotifier, []byte(accessSecret), []byte(refreshSecret))
 	authorizationService = auth.NewAuthorizeService([]byte(accessSecret), []byte(refreshSecret))

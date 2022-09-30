@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/golang-jwt/jwt"
 	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
-	tokens "gitlab.com/ricardo-public/jwt-tools/pkg"
+	tokens "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
 	authPort "gitlab.com/ricardo134/auth-service/internal/core/ports/auth"
 	customRicardoErr "gitlab.com/ricardo134/auth-service/pkg/errors"
 )

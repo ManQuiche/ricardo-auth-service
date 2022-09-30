@@ -1,12 +1,16 @@
 package entities
 
-import "gorm.io/gorm"
+import (
+	tokens "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
+	"gorm.io/gorm"
+)
 
 type User struct {
 	gorm.Model
-	Username string `json:"username"`
-	Email    string `json:"email" gorm:"uniqueIndex, notNull"`
-	Password string `json:"password" gorm:"notNull"`
+	Username string      `json:"username"`
+	Email    string      `json:"email" gorm:"uniqueIndex, notNull"`
+	Password string      `json:"password" gorm:"notNull"`
+	Role     tokens.Role `json:"role" gorm:"notNull,type:string"`
 	// ExternalSource Must be lowercase
 	ExternalSource string `json:"external_source"`
 }
