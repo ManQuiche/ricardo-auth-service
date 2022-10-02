@@ -45,10 +45,10 @@ func initRoutes() {
 	firebaseRouter := authRouter.Group("/firebase")
 	firebaseRouter.POST("/login", firebaseController.Login)
 
-	usrRouter := router.Group("/user")
-	usrRouter.GET("", userController.Get)
-	usrRouter.PATCH("", userController.Update)
-	usrRouter.DELETE("", userController.Delete)
+	usrRouter := router.Group("/users")
+	usrRouter.GET("/:user_id", userController.Get)
+	usrRouter.PATCH("/:user_id", userController.Update)
+	usrRouter.DELETE("/:user_id", userController.Delete)
 
 	// JWT Middleware definition
 	accessMiddleware := auth.NewJwtAuthMiddleware(authorizationService, false)

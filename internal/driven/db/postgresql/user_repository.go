@@ -18,7 +18,7 @@ func NewUserRepository(client *gorm.DB) user.Repository {
 
 func (u userRepository) Get(userID uint) (*entities.User, error) {
 	var gUser *entities.User
-	err := u.client.First(&gUser, "user_id", userID).Error
+	err := u.client.First(&gUser, userID).Error
 	if err != nil {
 		return nil, notFoundOrElseError(err)
 	}
@@ -27,19 +27,17 @@ func (u userRepository) Get(userID uint) (*entities.User, error) {
 }
 
 func (u userRepository) Update(user entities.User) (*entities.User, error) {
-	var updUser *entities.User
-	*updUser = user
-	err := u.client.Save(&updUser).Error
+	err := u.client.Save(&user).Error
 	if err != nil {
 		return nil, notFoundOrElseError(err)
 	}
 
-	return updUser, nil
+	return &user, nil
 }
 
 func (u userRepository) Delete(userID uint) (*entities.User, error) {
 	var delUser *entities.User
-	err := u.client.Delete(&delUser, "user_id", userID).Error
+	err := u.client.Delete(&delUser, userID).Error
 	if err != nil {
 		return nil, notFoundOrElseError(err)
 	}

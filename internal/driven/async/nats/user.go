@@ -18,11 +18,19 @@ func NewUserEventsNotifier(conn *nats.EncodedConn, createdTopic, updatedTopic, d
 }
 
 func (r eventsNotifier) Created(user entities.User) error {
-	return r.conn.Publish(r.createdTopic, &user)
+	shortUser := entities.ShortUser{
+		ID:       user.ID,
+		Username: user.Username,
+	}
+	return r.conn.Publish(r.createdTopic, &shortUser)
 }
 
 func (r eventsNotifier) Updated(user entities.User) error {
-	return r.conn.Publish(r.updatedTopic, &user)
+	shortUser := entities.ShortUser{
+		ID:       user.ID,
+		Username: user.Username,
+	}
+	return r.conn.Publish(r.updatedTopic, &shortUser)
 }
 
 func (r eventsNotifier) Deleted(userID uint) error {

@@ -5,8 +5,8 @@ import (
 	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
 	"gitlab.com/ricardo134/auth-service/internal/core/app/user"
 	"gitlab.com/ricardo134/auth-service/internal/core/entities"
-	"gorm.io/gorm"
 	"net/http"
+	"strconv"
 )
 
 type Controller interface {
@@ -24,14 +24,13 @@ type controller struct {
 }
 
 func (c controller) Get(gtx *gin.Context) {
-	var getUserReq entities.GetUserRequest
-	err := gtx.ShouldBindJSON(&getUserReq)
+	userID, err := strconv.Atoi(gtx.Param("user_id"))
 	if err != nil {
 		_ = ricardoErr.GinErrorHandler(gtx, ricardoErr.New(ricardoErr.ErrBadRequest, err.Error()))
 		return
 	}
 
-	gUser, err := c.uSvc.Get(getUserReq.ID)
+	gUser, err := c.uSvc.Get(uint(userID))
 	if err != nil {
 		_ = ricardoErr.GinErrorHandler(gtx, err)
 		return
@@ -41,17 +40,21 @@ func (c controller) Get(gtx *gin.Context) {
 }
 
 func (c controller) Update(gtx *gin.Context) {
+	userID, err := strconv.Atoi(gtx.Param("user_id"))
+	if err != nil {
+		_ = ricardoErr.GinErrorHandler(gtx, ricardoErr.New(ricardoErr.ErrBadRequest, err.Error()))
+		return
+	}
+
 	var updUserReq entities.UpdateUserRequest
-	err := gtx.ShouldBindJSON(&updUserReq)
+	err = gtx.ShouldBindJSON(&updUserReq)
 	if err != nil {
 		_ = ricardoErr.GinErrorHandler(gtx, ricardoErr.New(ricardoErr.ErrBadRequest, err.Error()))
 		return
 	}
 
 	u := entities.User{
-		Model: gorm.Model{
-			ID: updUserReq.ID,
-		},
+		ID:       uint(userID),
 		Username: updUserReq.Username,
 		Email:    updUserReq.Email,
 	}
@@ -65,14 +68,13 @@ func (c controller) Update(gtx *gin.Context) {
 }
 
 func (c controller) Delete(gtx *gin.Context) {
-	var delUserReq entities.DeleteUserRequest
-	err := gtx.ShouldBindJSON(&delUserReq)
+	userID, err := strconv.Atoi(gtx.Param("user_id"))
 	if err != nil {
 		_ = ricardoErr.GinErrorHandler(gtx, ricardoErr.New(ricardoErr.ErrBadRequest, err.Error()))
 		return
 	}
 
-	dUser, err := c.uSvc.Delete(delUserReq.ID)
+	dUser, err := c.uSvc.Delete(uint(userID))
 	if err != nil {
 		_ = ricardoErr.GinErrorHandler(gtx, err)
 		return

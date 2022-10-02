@@ -9,7 +9,8 @@ import (
 	"log"
 
 	"github.com/nats-io/nats.go"
-	natsext "gitlab.com/ricardo134/auth-service/internal/driven/broker/nats"
+	natsextout "gitlab.com/ricardo134/auth-service/internal/driven/async/nats"
+	natsextin "gitlab.com/ricardo134/auth-service/internal/driving/async/nats"
 )
 
 var (
@@ -18,7 +19,8 @@ var (
 	externalTokenService auth.ExternalTokenService
 	userService          user.Service
 
-	natsEncConn *nats.EncodedConn
+	natsEncConn      *nats.EncodedConn
+	asyncUserHandler natsextin.UserHandler
 )
 
 func LoadServices() {
@@ -31,10 +33,12 @@ func LoadServices() {
 	authrRepo := postgresql.NewAuthenticationRepository(client)
 	userRepo := postgresql.NewUserRepository(client)
 	tokenRepo := firebase.NewTokenRepository(firebaseAuth)
-	registerNotifier := natsext.NewUserEventsNotifier(natsEncConn, natsRegisterTopic)
+	userEventsNotifier := natsextout.NewUserEventsNotifier(natsEncConn, natsUserCreated, natsUserUpdated, natsUserDeleted)
 
-	authenticateService = auth.NewAuthenticateService(authrRepo, registerNotifier, []byte(accessSecret), []byte(refreshSecret))
+	authenticateService = auth.NewAuthenticateService(authrRepo, userEventsNotifier, []byte(accessSecret), []byte(refreshSecret))
 	authorizationService = auth.NewAuthorizeService([]byte(accessSecret), []byte(refreshSecret))
-	externalTokenService = auth.NewExternalTokenService(tokenRepo, authrRepo, registerNotifier, []byte(accessSecret), []byte(refreshSecret))
-	userService = user.NewService(userRepo)
+	externalTokenService = auth.NewExternalTokenService(tokenRepo, authrRepo, userEventsNotifier, []byte(accessSecret), []byte(refreshSecret))
+	userService = user.NewService(userRepo, userEventsNotifier)
+
+	asyncUserHandler = natsextin.NewNatsUserHandler(userService)
 }

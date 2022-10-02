@@ -35,6 +35,8 @@ func (s service) Update(user entities.User) (*entities.User, error) {
 		return nil, errorsext.New(errorsext.ErrNotFound, errors.Wrap(err, "cannot update user").Error())
 	}
 
+	_ = s.notifier.Updated(user)
+
 	return updUser, err
 }
 
