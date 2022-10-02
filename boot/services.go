@@ -31,10 +31,10 @@ func LoadServices() {
 	authrRepo := postgresql.NewAuthenticationRepository(client)
 	userRepo := postgresql.NewUserRepository(client)
 	tokenRepo := firebase.NewTokenRepository(firebaseAuth)
-	registerNotifier := natsext.NewRegisterNotifier(natsEncConn, natsRegisterTopic)
+	registerNotifier := natsext.NewUserEventsNotifier(natsEncConn, natsRegisterTopic)
 
 	authenticateService = auth.NewAuthenticateService(authrRepo, registerNotifier, []byte(accessSecret), []byte(refreshSecret))
 	authorizationService = auth.NewAuthorizeService([]byte(accessSecret), []byte(refreshSecret))
 	externalTokenService = auth.NewExternalTokenService(tokenRepo, authrRepo, registerNotifier, []byte(accessSecret), []byte(refreshSecret))
-	userService = user.NewUserService(userRepo)
+	userService = user.NewService(userRepo)
 }

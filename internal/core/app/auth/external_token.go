@@ -6,6 +6,7 @@ import (
 	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
 	tokens "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
 	authPort "gitlab.com/ricardo134/auth-service/internal/core/ports/auth"
+	"gitlab.com/ricardo134/auth-service/internal/core/ports/user"
 	"strconv"
 )
 
@@ -18,13 +19,13 @@ type externalTokenService struct {
 	authRepo      authPort.AuthenticationRepository
 	accessSecret  []byte
 	refreshSecret []byte
-	notifier      authPort.RegisterNotifier
+	notifier      user.EventsNotifier
 }
 
 func NewExternalTokenService(
 	tRepo authPort.TokenRepository,
 	aRepo authPort.AuthenticationRepository,
-	notifier authPort.RegisterNotifier,
+	notifier user.EventsNotifier,
 	accessSecret,
 	refreshSecret []byte,
 ) ExternalTokenService {
@@ -50,7 +51,7 @@ func (e externalTokenService) Verify(ctx context.Context, token string) (*tokens
 			return nil, err
 		}
 
-		_ = e.notifier.Notify(*existingUser)
+		_ = e.notifier.Created(*existingUser)
 	}
 
 	return generate(strconv.Itoa(int(existingUser.ID)), tokens.UserRole, e.accessSecret, e.refreshSecret), nil

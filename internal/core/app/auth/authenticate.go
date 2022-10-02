@@ -6,6 +6,7 @@ import (
 	tokens "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
 	"gitlab.com/ricardo134/auth-service/internal/core/entities"
 	authPort "gitlab.com/ricardo134/auth-service/internal/core/ports/auth"
+	"gitlab.com/ricardo134/auth-service/internal/core/ports/user"
 	customRicardoErr "gitlab.com/ricardo134/auth-service/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 	"strconv"
@@ -23,7 +24,7 @@ type AuthenticateService interface {
 
 type authenticateService struct {
 	repo          authPort.AuthenticationRepository
-	notifier      authPort.RegisterNotifier
+	notifier      user.EventsNotifier
 	accessSecret  []byte
 	refreshSecret []byte
 	// Expiration in minutes
@@ -31,7 +32,11 @@ type authenticateService struct {
 	//refreshTokenExp uint16
 }
 
-func NewAuthenticateService(repo authPort.AuthenticationRepository, notifier authPort.RegisterNotifier, accessSecret, refreshSecret []byte) AuthenticateService {
+func NewAuthenticateService(
+	repo authPort.AuthenticationRepository,
+	notifier user.EventsNotifier,
+	accessSecret, refreshSecret []byte,
+) AuthenticateService {
 	return authenticateService{
 		repo:          repo,
 		notifier:      notifier,
@@ -68,7 +73,7 @@ func (s authenticateService) Save(ctx context.Context, user entities.User) error
 
 	createdUser, err := s.repo.Save(ctx, user)
 	if err == nil {
-		_ = s.notifier.Notify(*createdUser)
+		_ = s.notifier.Created(*createdUser)
 	}
 
 	return err
