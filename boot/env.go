@@ -31,15 +31,17 @@ var (
 
 func LoadEnv() {
 	accessSecret = env("ACCESS_SECRET")
+	refreshSecret = env("REFRESH_SECRET")
+
 	dbHost = env("DB_HOST")
 	dbPassword = env("DB_PASSWORD")
 	dbPort = env("DB_PORT")
 	dbUser = env("DB_USER")
 	dbDatabase = env("DB_DATABASE")
+
 	debug = envBool("DEBUG")
 	noFirebase = envBool("NO_FIREBASE")
 	port = env("PORT")
-	refreshSecret = env("REFRESH_SECRET")
 	url = env("URL")
 
 	natsURL = env("NATS_URL")
