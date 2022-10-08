@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
+	_ "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
 	"gitlab.com/ricardo134/auth-service/internal/core/app/auth"
 	authhttp "gitlab.com/ricardo134/auth-service/pkg/http"
 	"net/http"
@@ -25,7 +26,7 @@ type firebaseController struct {
 // Login
 // @Summary Login
 // @Description Login from a firebase token
-// @Success 200 {object} entities.SignedTokenPair
+// @Success 200 {object} token.SignedTokens
 // @Failure 400 {object} ricardoErr.RicardoError
 // @Failure 404 {object} ricardoErr.RicardoError
 // @Router /auth/firebase/login [post]
