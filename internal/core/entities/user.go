@@ -11,7 +11,7 @@ type User struct {
 
 	Username string      `json:"username"`
 	Email    string      `json:"email" gorm:"uniqueIndex, notNull"`
-	Password string      `json:"password" gorm:"notNull"`
+	Password string      `json:"-" gorm:"notNull"`
 	Role     tokens.Role `json:"role" gorm:"notNull,type:string"`
 	// ExternalSource Must be lowercase
 	ExternalSource string `json:"external_source"`
