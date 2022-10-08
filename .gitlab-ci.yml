@@ -4,8 +4,10 @@ include:
     file:
     - 'go/latest-test.yml'
     - 'go/publish.yml'
+    - 'go/latest-doc.yml'
 
 
 stages:
 - test
 - publish
+- doc
