@@ -9,10 +9,11 @@ import (
 type User struct {
 	ID uint `json:"id" gorm:"primarykey"`
 
-	Username string      `json:"username"`
-	Email    string      `json:"email" gorm:"uniqueIndex, notNull"`
-	Password string      `json:"-" gorm:"notNull"`
-	Role     tokens.Role `json:"role" gorm:"notNull,type:string"`
+	Username    string      `json:"username"`
+	Email       string      `json:"email" gorm:"uniqueIndex, notNull"`
+	Password    string      `json:"-" gorm:"notNull"`
+	Role        tokens.Role `json:"role" gorm:"notNull,type:string"`
+	IsSetupDone bool        `json:"is_setup_done" gorm:"notNull"`
 	// ExternalSource Must be lowercase
 	ExternalSource string `json:"external_source"`
 
@@ -39,6 +40,7 @@ type LoginRequest struct {
 }
 
 type UpdateUserRequest struct {
-	Username string `json:"username,omitempty"`
-	Email    string `json:"email,omitempty"`
+	Username    string `json:"username"`
+	Email       string `json:"email"`
+	IsSetupDone bool   `json:"is_setup_done"`
 }
