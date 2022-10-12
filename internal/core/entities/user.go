@@ -13,7 +13,7 @@ type User struct {
 	Email       string      `json:"email" gorm:"uniqueIndex, notNull"`
 	Password    string      `json:"-" gorm:"notNull"`
 	Role        tokens.Role `json:"role" gorm:"notNull,type:string"`
-	IsSetupDone bool        `json:"is_setup_done" gorm:"notNull"`
+	IsSetupDone bool        `json:"is_setup_done" gorm:"notNull,default:false"`
 	// ExternalSource Must be lowercase
 	ExternalSource string `json:"external_source"`
 
