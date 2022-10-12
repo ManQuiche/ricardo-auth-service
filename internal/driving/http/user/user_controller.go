@@ -3,6 +3,7 @@ package user
 import (
 	"github.com/gin-gonic/gin"
 	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
+	tokens "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
 	"gitlab.com/ricardo134/auth-service/internal/core/app/user"
 	"gitlab.com/ricardo134/auth-service/internal/core/entities"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 
 type Controller interface {
 	Get(gtx *gin.Context)
+	Me(gtx *gin.Context)
 	Update(gtx *gin.Context)
 	Delete(gtx *gin.Context)
 }
@@ -44,6 +46,23 @@ func (c controller) Get(gtx *gin.Context) {
 	}
 
 	gtx.JSON(http.StatusOK, *gUser)
+}
+
+// Me
+// @Summary Get connected user
+// @Description Get connected user
+// @Success 200 {object} entities.User
+// @Failure 404 {object} ricardoErr.RicardoError
+// @Router /users/me [get]
+func (c controller) Me(gtx *gin.Context) {
+	userID, _ := gtx.Get(tokens.UserIDKey)
+	user, err := c.uSvc.Get(userID.(uint))
+	if err != nil {
+		_ = ricardoErr.GinErrorHandler(gtx, err)
+		return
+	}
+
+	gtx.JSON(http.StatusOK, *user)
 }
 
 // Update

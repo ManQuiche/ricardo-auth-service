@@ -15,7 +15,6 @@ import (
 
 var (
 	authenticateService  auth.AuthenticateService
-	authorizationService auth.AuthorizeService
 	externalTokenService auth.ExternalTokenService
 	userService          user.Service
 
@@ -36,7 +35,6 @@ func LoadServices() {
 	userEventsNotifier := natsextout.NewUserEventsNotifier(natsEncConn, natsUserCreated, natsUserUpdated, natsUserDeleted)
 
 	authenticateService = auth.NewAuthenticateService(authrRepo, userEventsNotifier, []byte(accessSecret), []byte(refreshSecret))
-	authorizationService = auth.NewAuthorizeService([]byte(accessSecret), []byte(refreshSecret))
 	externalTokenService = auth.NewExternalTokenService(tokenRepo, authrRepo, userEventsNotifier, []byte(accessSecret), []byte(refreshSecret))
 	userService = user.NewService(userRepo, userEventsNotifier)
 
