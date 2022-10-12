@@ -40,7 +40,7 @@ type LoginRequest struct {
 }
 
 type UpdateUserRequest struct {
-	Username    string `json:"username"`
-	Email       string `json:"email"`
-	IsSetupDone bool   `json:"is_setup_done"`
+	Username    string `json:"username" binding:"required"`
+	Email       string `json:"email" binding:"required"`
+	IsSetupDone bool   `json:"is_setup_done" binding:"required"`
 }

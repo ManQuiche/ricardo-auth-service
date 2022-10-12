@@ -23,6 +23,13 @@ type controller struct {
 	uSvc user.Service
 }
 
+// Get
+// @Summary Get user
+// @Description Get a user
+// @Success 200 {object} entities.User
+// @Failure 400 {object} ricardoErr.RicardoError
+// @Failure 404 {object} ricardoErr.RicardoError
+// @Router /users/{user_id} [get]
 func (c controller) Get(gtx *gin.Context) {
 	userID, err := strconv.Atoi(gtx.Param("user_id"))
 	if err != nil {
@@ -39,6 +46,15 @@ func (c controller) Get(gtx *gin.Context) {
 	gtx.JSON(http.StatusOK, *gUser)
 }
 
+// Update
+// @Summary Update a user
+// @Description Update a user
+// @Param user_id path int true "User id"
+// @Param user body entities.UpdateUserRequest true "Updated user info"
+// @Success 200 {object} entities.User
+// @Failure 400 {object} ricardoErr.RicardoError
+// @Failure 404 {object} ricardoErr.RicardoError
+// @Router /users/{user_id} [patch]
 func (c controller) Update(gtx *gin.Context) {
 	userID, err := strconv.Atoi(gtx.Param("user_id"))
 	if err != nil {
@@ -54,9 +70,10 @@ func (c controller) Update(gtx *gin.Context) {
 	}
 
 	u := entities.User{
-		ID:       uint(userID),
-		Username: updUserReq.Username,
-		Email:    updUserReq.Email,
+		ID:          uint(userID),
+		Username:    updUserReq.Username,
+		Email:       updUserReq.Email,
+		IsSetupDone: updUserReq.IsSetupDone,
 	}
 	updUser, err := c.uSvc.Update(u)
 	if err != nil {
@@ -67,6 +84,14 @@ func (c controller) Update(gtx *gin.Context) {
 	gtx.JSON(http.StatusOK, *updUser)
 }
 
+// Delete
+// @Summary Delete a user
+// @Description Delete a user
+// @Param user_id path int true "User id"
+// @Success 200 {object} entities.User
+// @Failure 400 {object} ricardoErr.RicardoError
+// @Failure 404 {object} ricardoErr.RicardoError
+// @Router /users/{user_id} [delete]
 func (c controller) Delete(gtx *gin.Context) {
 	userID, err := strconv.Atoi(gtx.Param("user_id"))
 	if err != nil {
