@@ -36,7 +36,7 @@ type firebaseController struct {
 // @Failure 404 {object} errorsext.RicardoError
 // @Router /auth/firebase/login [post]
 func (f firebaseController) Login(gtx *gin.Context) {
-	span := gtx.Value(tracing.HttpSpanKey).(trace.Span)
+	span := gtx.Request.Context().Value(tracing.HttpSpanKey).(trace.Span)
 	defer span.End()
 
 	var err error

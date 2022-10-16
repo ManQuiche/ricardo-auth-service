@@ -37,7 +37,7 @@ type controller struct {
 // @Failure 404 {object} ricardoErr.RicardoError
 // @Router /users/{user_id} [get]
 func (c controller) Get(gtx *gin.Context) {
-	span := gtx.Value(tracing.HttpSpanKey).(trace.Span)
+	span := gtx.Request.Context().Value(tracing.HttpSpanKey).(trace.Span)
 	defer span.End()
 
 	userID, err := strconv.Atoi(gtx.Param("user_id"))
@@ -66,7 +66,7 @@ func (c controller) Get(gtx *gin.Context) {
 // @Failure 404 {object} ricardoErr.RicardoError
 // @Router /users/me [get]
 func (c controller) Me(gtx *gin.Context) {
-	span := gtx.Value(tracing.HttpSpanKey).(trace.Span)
+	span := gtx.Request.Context().Value(tracing.HttpSpanKey).(trace.Span)
 	defer span.End()
 
 	userID, _ := gtx.Get(tokens.UserIDKey)
@@ -90,7 +90,7 @@ func (c controller) Me(gtx *gin.Context) {
 // @Failure 404 {object} ricardoErr.RicardoError
 // @Router /users/{user_id} [patch]
 func (c controller) Update(gtx *gin.Context) {
-	span := gtx.Value(tracing.HttpSpanKey).(trace.Span)
+	span := gtx.Request.Context().Value(tracing.HttpSpanKey).(trace.Span)
 	defer span.End()
 
 	userID, err := strconv.Atoi(gtx.Param("user_id"))
@@ -137,7 +137,7 @@ func (c controller) Update(gtx *gin.Context) {
 // @Failure 404 {object} ricardoErr.RicardoError
 // @Router /users/{user_id} [delete]
 func (c controller) Delete(gtx *gin.Context) {
-	span := gtx.Value(tracing.HttpSpanKey).(trace.Span)
+	span := gtx.Request.Context().Value(tracing.HttpSpanKey).(trace.Span)
 	defer span.End()
 
 	userID, err := strconv.Atoi(gtx.Param("user_id"))

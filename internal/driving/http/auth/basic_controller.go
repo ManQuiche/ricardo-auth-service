@@ -38,7 +38,7 @@ type basicController struct {
 // @Router /auth/refresh [post]
 func (c basicController) Refresh(gtx *gin.Context) {
 	// TODO: invalidate old token pair
-	span := gtx.Value(tracing.HttpSpanKey).(trace.Span)
+	span := gtx.Request.Context().Value(tracing.HttpSpanKey).(trace.Span)
 	var err error
 	defer span.End()
 
@@ -63,7 +63,7 @@ func (c basicController) Refresh(gtx *gin.Context) {
 // @Failure 403 {object} errorsext.RicardoError
 // @Router /auth/register [post]
 func (c basicController) Create(gtx *gin.Context) {
-	span := gtx.Value(tracing.HttpSpanKey).(trace.Span)
+	span := gtx.Request.Context().Value(tracing.HttpSpanKey).(trace.Span)
 	var err error
 	defer span.End()
 
@@ -98,7 +98,7 @@ func (c basicController) Create(gtx *gin.Context) {
 // @Failure 404 {object} errorsext.RicardoError
 // @Router /auth/login [post]
 func (c basicController) Login(gtx *gin.Context) {
-	span := gtx.Value(tracing.HttpSpanKey).(trace.Span)
+	span := gtx.Request.Context().Value(tracing.HttpSpanKey).(trace.Span)
 	var err error
 	defer span.End()
 
