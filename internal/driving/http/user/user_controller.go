@@ -49,7 +49,7 @@ func (c controller) Get(gtx *gin.Context) {
 		return
 	}
 
-	gUser, err := c.uSvc.Get(gtx, uint(userID))
+	gUser, err := c.uSvc.Get(gtx.Request.Context(), uint(userID))
 	if err != nil {
 		span.SetAttributes(semconv.HTTPStatusCodeKey.String(strconv.Itoa(http.StatusNotFound)))
 		_ = ricardoErr.GinErrorHandler(gtx, err)
@@ -70,7 +70,7 @@ func (c controller) Me(gtx *gin.Context) {
 	defer span.End()
 
 	userID, _ := gtx.Get(tokens.UserIDKey)
-	user, err := c.uSvc.Get(gtx, userID.(uint))
+	user, err := c.uSvc.Get(gtx.Request.Context(), userID.(uint))
 	if err != nil {
 		span.SetAttributes(semconv.HTTPStatusCodeKey.String(strconv.Itoa(http.StatusNotFound)))
 		_ = ricardoErr.GinErrorHandler(gtx, err)
@@ -118,7 +118,7 @@ func (c controller) Update(gtx *gin.Context) {
 		Email:       updUserReq.Email,
 		IsSetupDone: updUserReq.IsSetupDone,
 	}
-	updUser, err := c.uSvc.Update(gtx, u)
+	updUser, err := c.uSvc.Update(gtx.Request.Context(), u)
 	if err != nil {
 		span.SetAttributes(semconv.HTTPStatusCodeKey.String(strconv.Itoa(http.StatusNotFound)))
 		_ = ricardoErr.GinErrorHandler(gtx, err)
@@ -149,7 +149,7 @@ func (c controller) Delete(gtx *gin.Context) {
 		return
 	}
 
-	dUser, err := c.uSvc.Delete(gtx, uint(userID))
+	dUser, err := c.uSvc.Delete(gtx.Request.Context(), uint(userID))
 	if err != nil {
 		span.SetAttributes(semconv.HTTPStatusCodeKey.String(strconv.Itoa(http.StatusNotFound)))
 		_ = ricardoErr.GinErrorHandler(gtx, err)
