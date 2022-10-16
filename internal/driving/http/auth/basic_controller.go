@@ -1,12 +1,16 @@
 package auth
 
 import (
-	"gitlab.com/ricardo134/auth-service/internal/core/app/auth"
-	"gitlab.com/ricardo134/auth-service/internal/core/entities"
 	"net/http"
 
+	"gitlab.com/ricardo134/auth-service/boot"
+	"gitlab.com/ricardo134/auth-service/internal/core/app/auth"
+	"gitlab.com/ricardo134/auth-service/internal/core/entities"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
+
 	"github.com/gin-gonic/gin"
-	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
+	errorsext "gitlab.com/ricardo-public/errors/pkg/errors"
 	token "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
 )
 
@@ -28,7 +32,7 @@ type basicController struct {
 // @Summary Serve a new token pair
 // @Description Serve a new refresh token if the given one is good, and a new access token too
 // @Success 200 {object} token.SignedTokens
-// @Failure 401 {object} ricardoErr.RicardoError
+// @Failure 401 {object} errorsext.RicardoError
 // @Router /auth/refresh [post]
 func (c basicController) Refresh(gtx *gin.Context) {
 	// TODO: invalidate old token pair
@@ -38,7 +42,7 @@ func (c basicController) Refresh(gtx *gin.Context) {
 
 	tokenPair, err := c.authr.Refresh(gtx.Request.Context(), token)
 	if err != nil {
-		_ = ricardoErr.GinErrorHandler(gtx, ricardoErr.New("TODO: add internal server error type to error lib", err.Error()))
+		_ = errorsext.GinErrorHandler(gtx, errorsext.New("TODO: add internal server error type to error lib", err.Error()))
 		return
 	}
 
@@ -49,14 +53,14 @@ func (c basicController) Refresh(gtx *gin.Context) {
 // @Summary Create a new user
 // @Description Create a new user
 // @Success 200
-// @Failure 400 {object} ricardoErr.RicardoError
-// @Failure 403 {object} ricardoErr.RicardoError
-// @Router /auth/register [post]
+// @Failure 400 {object} errorsext.RicardoError
+// @Failure 403 {object} errorsext.RicardoError
+// @Router /auth/register [post]context.WithValue(ctx, "span", span)
 func (c basicController) Create(gtx *gin.Context) {
 	var createUserRequest entities.CreateUserRequest
 	err := gtx.ShouldBindJSON(&createUserRequest)
 	if err != nil {
-		_ = ricardoErr.GinErrorHandler(gtx, ricardoErr.New(ricardoErr.ErrBadRequest, err.Error()))
+		_ = errorsext.GinErrorHandler(gtx, errorsext.New(errorsext.ErrBadRequest, err.Error()))
 		return
 	}
 
@@ -67,7 +71,7 @@ func (c basicController) Create(gtx *gin.Context) {
 	}
 	err = c.authr.Save(gtx.Request.Context(), user)
 	if err != nil {
-		_ = ricardoErr.GinErrorHandler(gtx, err)
+		_ = errorsext.GinErrorHandler(gtx, err)
 		return
 	}
 }
@@ -76,20 +80,27 @@ func (c basicController) Create(gtx *gin.Context) {
 // @Summary Login
 // @Description Login from an email and a password
 // @Success 200 {object} token.SignedTokens
-// @Failure 400 {object} ricardoErr.RicardoError
-// @Failure 404 {object} ricardoErr.RicardoError
+// @Failure 400 {object} errorsext.RicardoError
+// @Failure 404 {object} errorsext.RicardoError
 // @Router /auth/login [post]
 func (c basicController) Login(gtx *gin.Context) {
+	span := gtx.Request.Context().Value(boot.SpanKey).(trace.Span)
+	defer span.End()
+
 	var loginRequest entities.LoginRequest
 	err := gtx.ShouldBindJSON(&loginRequest)
 	if err != nil {
-		_ = ricardoErr.GinErrorHandler(gtx, ricardoErr.New(ricardoErr.ErrBadRequest, err.Error()))
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		_ = errorsext.GinErrorHandler(gtx, errorsext.New(errorsext.ErrBadRequest, err.Error()))
 		return
 	}
 
 	tokens, err := c.authr.Login(gtx.Request.Context(), loginRequest)
 	if err != nil {
-		_ = ricardoErr.GinErrorHandler(gtx, err)
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		_ = errorsext.GinErrorHandler(gtx, err)
 		return
 	}
 

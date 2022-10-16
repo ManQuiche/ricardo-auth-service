@@ -5,6 +5,7 @@ import (
 	tokens "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
 	"gitlab.com/ricardo134/auth-service/internal/driving/http/auth"
 	"gitlab.com/ricardo134/auth-service/internal/driving/http/user"
+	"golang.org/x/net/context"
 	"log"
 	"net/http"
 
@@ -13,6 +14,10 @@ import (
 
 var (
 	router *gin.Engine
+)
+
+const (
+	SpanKey = "span"
 )
 
 // @title auth-service
@@ -29,6 +34,12 @@ var (
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
 func initRoutes() {
+	router.Use(func(gtx *gin.Context) {
+		ctx, span := Tracer.Start(gtx.Request.Context(), fmt.Sprintf("%s %s", gtx.Request.Method, gtx.FullPath()))
+		gtx.Request = gtx.Request.WithContext(context.WithValue(ctx, "span", span))
+		gtx.Next()
+	})
+
 	// Ready route
 	router.GET("/", func(context *gin.Context) {
 		context.Status(http.StatusOK)

@@ -2,15 +2,19 @@ package auth
 
 import (
 	"context"
+	"strconv"
+	"time"
+
 	errorsext "gitlab.com/ricardo-public/errors/pkg/errors"
 	tokens "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
+	"gitlab.com/ricardo134/auth-service/boot"
 	"gitlab.com/ricardo134/auth-service/internal/core/entities"
 	authPort "gitlab.com/ricardo134/auth-service/internal/core/ports/auth"
 	"gitlab.com/ricardo134/auth-service/internal/core/ports/user"
 	customRicardoErr "gitlab.com/ricardo134/auth-service/pkg/errors"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
 	"golang.org/x/crypto/bcrypt"
-	"strconv"
-	"time"
 )
 
 const (
@@ -46,13 +50,22 @@ func NewAuthenticateService(
 }
 
 func (s authenticateService) Login(ctx context.Context, loginRequest entities.LoginRequest) (*tokens.SignedTokens, error) {
-	user, err := s.repo.EmailExists(ctx, loginRequest.Email)
+	nctx, span := boot.Tracer.Start(ctx, "Login")
+	defer span.End()
+
+	user, err := s.repo.EmailExists(nctx, loginRequest.Email)
 	if err != nil || (*user == entities.User{}) {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
 		return nil, errorsext.New(errorsext.ErrUnauthorized, customRicardoErr.ErrCannotFindUserDescription)
 	}
 
+	span.SetAttributes(attribute.KeyValue{Key: "user.email", Value: attribute.StringValue(user.Email)})
+
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginRequest.Password))
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
 		return nil, errorsext.New(errorsext.ErrUnauthorized, customRicardoErr.ErrCannotFindUserDescription)
 	}
 

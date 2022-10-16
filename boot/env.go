@@ -27,6 +27,9 @@ var (
 
 	noFirebase bool
 	debug      bool
+
+	environment     string
+	tracingEndpoint string
 )
 
 func LoadEnv() {
@@ -50,6 +53,11 @@ func LoadEnv() {
 	natsUserCreated = env("NATS_USER_CREATED")
 	natsUserUpdated = env("NATS_USER_UPDATED")
 	natsUserDeleted = env("NATS_USER_DELETED")
+
+	// DMZ, QA, PROD ?
+	environment = env("ENVIRONMENT")
+
+	tracingEndpoint = env("TRACING_ENDPOINT")
 }
 
 func envBool(name string) bool {

@@ -1,4 +1,4 @@
-package main
+package auth_service
 
 import (
 	"gitlab.com/ricardo134/auth-service/boot"
