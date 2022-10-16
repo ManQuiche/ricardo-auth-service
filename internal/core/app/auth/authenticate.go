@@ -2,12 +2,12 @@ package auth
 
 import (
 	"context"
+	"gitlab.com/ricardo-public/tracing/pkg/tracing"
 	"strconv"
 	"time"
 
 	errorsext "gitlab.com/ricardo-public/errors/pkg/errors"
 	tokens "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
-	"gitlab.com/ricardo134/auth-service/boot"
 	"gitlab.com/ricardo134/auth-service/internal/core/entities"
 	authPort "gitlab.com/ricardo134/auth-service/internal/core/ports/auth"
 	"gitlab.com/ricardo134/auth-service/internal/core/ports/user"
@@ -50,13 +50,12 @@ func NewAuthenticateService(
 }
 
 func (s authenticateService) Login(ctx context.Context, loginRequest entities.LoginRequest) (*tokens.SignedTokens, error) {
-	nctx, span := boot.Tracer.Start(ctx, "Login")
+	nctx, span := tracing.Tracer.Start(ctx, "auth.authenticateService.Login")
+	var err error
 	defer span.End()
 
 	user, err := s.repo.EmailExists(nctx, loginRequest.Email)
 	if err != nil || (*user == entities.User{}) {
-		span.RecordError(err)
-		span.SetStatus(codes.Error, err.Error())
 		return nil, errorsext.New(errorsext.ErrUnauthorized, customRicardoErr.ErrCannotFindUserDescription)
 	}
 
@@ -73,18 +72,24 @@ func (s authenticateService) Login(ctx context.Context, loginRequest entities.Lo
 }
 
 func (s authenticateService) Save(ctx context.Context, user entities.User) error {
-	existingUser, _ := s.repo.EmailExists(ctx, user.Email)
+	nctx, span := tracing.Tracer.Start(ctx, "auth.authenticateService.Save")
+	var err error
+	defer span.End()
+
+	existingUser, _ := s.repo.EmailExists(nctx, user.Email)
 	if existingUser != nil {
 		return errorsext.New(errorsext.ErrForbidden, "user already exists")
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcryptCost)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
 		return errorsext.New(errorsext.ErrNotFound, "could not hash password")
 	}
 	user.Password = string(hash)
 
-	createdUser, err := s.repo.Save(ctx, user)
+	createdUser, err := s.repo.Save(nctx, user)
 	if err == nil {
 		_ = s.notifier.Created(*createdUser)
 	}
@@ -93,8 +98,14 @@ func (s authenticateService) Save(ctx context.Context, user entities.User) error
 }
 
 func (s authenticateService) Refresh(ctx context.Context, token string) (*tokens.SignedTokens, error) {
+	_, span := tracing.Tracer.Start(ctx, "auth.authenticateService.Refresh")
+	var err error
+	defer span.End()
+
 	pToken, err := tokens.Parse(token, s.refreshSecret)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
 		return nil, errorsext.New(errorsext.ErrUnauthorized, customRicardoErr.ErrInvalidTokenDescription)
 	}
 	rClaims := pToken.Claims.(*tokens.RicardoClaims)

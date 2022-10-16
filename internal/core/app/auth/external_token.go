@@ -5,6 +5,7 @@ import (
 	errors2 "github.com/pkg/errors"
 	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
 	tokens "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
+	"gitlab.com/ricardo-public/tracing/pkg/tracing"
 	authPort "gitlab.com/ricardo134/auth-service/internal/core/ports/auth"
 	"gitlab.com/ricardo134/auth-service/internal/core/ports/user"
 	"strconv"
@@ -39,14 +40,17 @@ func NewExternalTokenService(
 }
 
 func (e externalTokenService) Verify(ctx context.Context, token string) (*tokens.SignedTokens, error) {
-	user, err := e.tokenRepo.Verify(ctx, token)
+	nctx, span := tracing.Tracer.Start(ctx, "auth.externalTokenService.Verify")
+	defer span.End()
+
+	user, err := e.tokenRepo.Verify(nctx, token)
 	if err != nil {
 		return nil, ricardoErr.New(ricardoErr.ErrUnauthorized, errors2.Wrap(err, "can't find user").Error())
 	}
 
-	existingUser, err := e.authRepo.EmailExists(ctx, user.Email)
+	existingUser, err := e.authRepo.EmailExists(nctx, user.Email)
 	if existingUser == nil {
-		existingUser, err = e.authRepo.Save(ctx, *user)
+		existingUser, err = e.authRepo.Save(nctx, *user)
 		if err != nil {
 			return nil, err
 		}

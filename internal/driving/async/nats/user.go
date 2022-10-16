@@ -1,6 +1,7 @@
 package nats
 
 import (
+	"context"
 	"gitlab.com/ricardo134/auth-service/internal/core/ports/user"
 )
 
@@ -17,5 +18,5 @@ func NewNatsUserHandler(userSvc user.Service) UserHandler {
 }
 
 func (nh userHandler) Requested(userID uint) {
-	_, _ = nh.userService.Get(userID)
+	_, _ = nh.userService.Get(context.Background(), userID)
 }

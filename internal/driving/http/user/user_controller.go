@@ -4,8 +4,12 @@ import (
 	"github.com/gin-gonic/gin"
 	ricardoErr "gitlab.com/ricardo-public/errors/pkg/errors"
 	tokens "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
+	"gitlab.com/ricardo-public/tracing/pkg/tracing"
 	"gitlab.com/ricardo134/auth-service/internal/core/app/user"
 	"gitlab.com/ricardo134/auth-service/internal/core/entities"
+	"go.opentelemetry.io/otel/codes"
+	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
+	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	"strconv"
 )
@@ -33,14 +37,21 @@ type controller struct {
 // @Failure 404 {object} ricardoErr.RicardoError
 // @Router /users/{user_id} [get]
 func (c controller) Get(gtx *gin.Context) {
+	span := gtx.Value(tracing.HttpSpanKey).(trace.Span)
+	defer span.End()
+
 	userID, err := strconv.Atoi(gtx.Param("user_id"))
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		span.SetAttributes(semconv.HTTPStatusCodeKey.String(strconv.Itoa(http.StatusBadRequest)))
 		_ = ricardoErr.GinErrorHandler(gtx, ricardoErr.New(ricardoErr.ErrBadRequest, err.Error()))
 		return
 	}
 
-	gUser, err := c.uSvc.Get(uint(userID))
+	gUser, err := c.uSvc.Get(gtx, uint(userID))
 	if err != nil {
+		span.SetAttributes(semconv.HTTPStatusCodeKey.String(strconv.Itoa(http.StatusNotFound)))
 		_ = ricardoErr.GinErrorHandler(gtx, err)
 		return
 	}
@@ -55,9 +66,13 @@ func (c controller) Get(gtx *gin.Context) {
 // @Failure 404 {object} ricardoErr.RicardoError
 // @Router /users/me [get]
 func (c controller) Me(gtx *gin.Context) {
+	span := gtx.Value(tracing.HttpSpanKey).(trace.Span)
+	defer span.End()
+
 	userID, _ := gtx.Get(tokens.UserIDKey)
-	user, err := c.uSvc.Get(userID.(uint))
+	user, err := c.uSvc.Get(gtx, userID.(uint))
 	if err != nil {
+		span.SetAttributes(semconv.HTTPStatusCodeKey.String(strconv.Itoa(http.StatusNotFound)))
 		_ = ricardoErr.GinErrorHandler(gtx, err)
 		return
 	}
@@ -75,8 +90,14 @@ func (c controller) Me(gtx *gin.Context) {
 // @Failure 404 {object} ricardoErr.RicardoError
 // @Router /users/{user_id} [patch]
 func (c controller) Update(gtx *gin.Context) {
+	span := gtx.Value(tracing.HttpSpanKey).(trace.Span)
+	defer span.End()
+
 	userID, err := strconv.Atoi(gtx.Param("user_id"))
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		span.SetAttributes(semconv.HTTPStatusCodeKey.String(strconv.Itoa(http.StatusBadRequest)))
 		_ = ricardoErr.GinErrorHandler(gtx, ricardoErr.New(ricardoErr.ErrBadRequest, err.Error()))
 		return
 	}
@@ -84,6 +105,9 @@ func (c controller) Update(gtx *gin.Context) {
 	var updUserReq entities.UpdateUserRequest
 	err = gtx.ShouldBindJSON(&updUserReq)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		span.SetAttributes(semconv.HTTPStatusCodeKey.String(strconv.Itoa(http.StatusBadRequest)))
 		_ = ricardoErr.GinErrorHandler(gtx, ricardoErr.New(ricardoErr.ErrBadRequest, err.Error()))
 		return
 	}
@@ -94,8 +118,9 @@ func (c controller) Update(gtx *gin.Context) {
 		Email:       updUserReq.Email,
 		IsSetupDone: updUserReq.IsSetupDone,
 	}
-	updUser, err := c.uSvc.Update(u)
+	updUser, err := c.uSvc.Update(gtx, u)
 	if err != nil {
+		span.SetAttributes(semconv.HTTPStatusCodeKey.String(strconv.Itoa(http.StatusNotFound)))
 		_ = ricardoErr.GinErrorHandler(gtx, err)
 		return
 	}
@@ -112,14 +137,21 @@ func (c controller) Update(gtx *gin.Context) {
 // @Failure 404 {object} ricardoErr.RicardoError
 // @Router /users/{user_id} [delete]
 func (c controller) Delete(gtx *gin.Context) {
+	span := gtx.Value(tracing.HttpSpanKey).(trace.Span)
+	defer span.End()
+
 	userID, err := strconv.Atoi(gtx.Param("user_id"))
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		span.SetAttributes(semconv.HTTPStatusCodeKey.String(strconv.Itoa(http.StatusBadRequest)))
 		_ = ricardoErr.GinErrorHandler(gtx, ricardoErr.New(ricardoErr.ErrBadRequest, err.Error()))
 		return
 	}
 
-	dUser, err := c.uSvc.Delete(uint(userID))
+	dUser, err := c.uSvc.Delete(gtx, uint(userID))
 	if err != nil {
+		span.SetAttributes(semconv.HTTPStatusCodeKey.String(strconv.Itoa(http.StatusNotFound)))
 		_ = ricardoErr.GinErrorHandler(gtx, err)
 		return
 	}

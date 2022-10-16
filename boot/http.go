@@ -3,8 +3,10 @@ package boot
 import (
 	"fmt"
 	tokens "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
+	"gitlab.com/ricardo-public/tracing/pkg/tracing"
 	"gitlab.com/ricardo134/auth-service/internal/driving/http/auth"
 	"gitlab.com/ricardo134/auth-service/internal/driving/http/user"
+	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
 	"golang.org/x/net/context"
 	"log"
 	"net/http"
@@ -35,7 +37,8 @@ const (
 
 func initRoutes() {
 	router.Use(func(gtx *gin.Context) {
-		ctx, span := Tracer.Start(gtx.Request.Context(), fmt.Sprintf("%s %s", gtx.Request.Method, gtx.FullPath()))
+		ctx, span := tracing.Tracer.Start(gtx.Request.Context(), fmt.Sprintf("%s %s", gtx.Request.Method, gtx.FullPath()))
+		span.SetAttributes(semconv.HTTPURLKey.String(gtx.Request.URL.String()))
 		gtx.Request = gtx.Request.WithContext(context.WithValue(ctx, "span", span))
 		gtx.Next()
 	})

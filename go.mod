@@ -11,9 +11,11 @@ require (
 	github.com/swaggo/swag v1.8.5
 	gitlab.com/ricardo-public/errors v1.0.4
 	gitlab.com/ricardo-public/jwt-tools/v2 v2.2.3
+	gitlab.com/ricardo-public/tracing v0.2.1
 	go.opentelemetry.io/otel v1.11.0
-	go.opentelemetry.io/otel/exporters/jaeger v1.11.0
+	go.opentelemetry.io/otel/trace v1.11.0
 	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
+	golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4
 	google.golang.org/api v0.58.0
 	gorm.io/driver/postgres v1.2.3
 	gorm.io/gorm v1.22.4
@@ -63,9 +65,8 @@ require (
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/ugorji/go/codec v1.2.6 // indirect
 	go.opencensus.io v0.23.0 // indirect
+	go.opentelemetry.io/otel/exporters/jaeger v1.11.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.11.0 // indirect
-	go.opentelemetry.io/otel/trace v1.11.0 // indirect
-	golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4 // indirect
 	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1 // indirect
 	golang.org/x/sys v0.0.0-20220919091848-fb04ddd9f9c8 // indirect
 	golang.org/x/text v0.3.7 // indirect
