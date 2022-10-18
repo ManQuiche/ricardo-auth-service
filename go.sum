@@ -373,10 +373,8 @@ gitlab.com/ricardo-public/errors v1.0.4 h1:vsQN5x6IyA1W/0zgEP/T5BB1SaeGO9oPaYXbu
 gitlab.com/ricardo-public/errors v1.0.4/go.mod h1:yK247M2lKZoapVm8CMQ1lm1utfG3Kv7gH4g6xoPgwSY=
 gitlab.com/ricardo-public/jwt-tools/v2 v2.2.3 h1:rU+41pYKz/csDVOCfJScM4ifE+9HJ7n2muqKm33uybI=
 gitlab.com/ricardo-public/jwt-tools/v2 v2.2.3/go.mod h1:kKzgfK4QHXp9ahQjrOfHai+7QWIJPTtJknkrCf10PKs=
-gitlab.com/ricardo-public/tracing v0.0.0-20221016140948-9d65b7ba0946 h1:yERp+CQ+7u5TOViG6I0bu2vzmP7kcGIPNKzgKy8BjoQ=
-gitlab.com/ricardo-public/tracing v0.0.0-20221016140948-9d65b7ba0946/go.mod h1:sLphqgXRBNCgiYJgS1b+IxhxBNJuDIlIuODAkuvwRBg=
-gitlab.com/ricardo-public/tracing v0.2.1 h1:irVPX6AIFdeyMSyxS2IxRIiJOzetTVaJUkKgif2flxs=
-gitlab.com/ricardo-public/tracing v0.2.1/go.mod h1:4VchGpAkBs38cI4SnGztA0IXKQ/SFipCFiCW3QByz9Q=
+gitlab.com/ricardo-public/tracing v0.3.0 h1:82vMwPwZl5hv5QdnHiSOB4igYQh1C3ZcfcAbdwOQPp8=
+gitlab.com/ricardo-public/tracing v0.3.0/go.mod h1:4VchGpAkBs38cI4SnGztA0IXKQ/SFipCFiCW3QByz9Q=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
 go.opencensus.io v0.22.0/go.mod h1:+kGneAE2xo2IficOXnaByMWTGM9T73dGwxeWcUqIpI8=
 go.opencensus.io v0.22.2/go.mod h1:yxeiOL68Rb0Xd1ddK5vPZ/oVn4vY4Ynel7k9FzqtOIw=

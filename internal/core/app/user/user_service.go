@@ -45,7 +45,7 @@ func (s service) Update(ctx context.Context, user entities.User) (*entities.User
 		return nil, errorsext.New(errorsext.ErrNotFound, errors.Wrap(err, "cannot update user").Error())
 	}
 
-	_ = s.notifier.Updated(user)
+	_ = s.notifier.Updated(ctx, user)
 
 	return updUser, err
 }
@@ -60,7 +60,7 @@ func (s service) Delete(ctx context.Context, userID uint) (*entities.User, error
 		return nil, errorsext.New(errorsext.ErrNotFound, errors.Wrap(err, "cannot delete user").Error())
 	}
 
-	_ = s.notifier.Deleted(userID)
+	_ = s.notifier.Deleted(ctx, userID)
 
 	return delUser, err
 }

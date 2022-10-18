@@ -11,7 +11,7 @@ require (
 	github.com/swaggo/swag v1.8.5
 	gitlab.com/ricardo-public/errors v1.0.4
 	gitlab.com/ricardo-public/jwt-tools/v2 v2.2.3
-	gitlab.com/ricardo-public/tracing v0.2.1
+	gitlab.com/ricardo-public/tracing v0.3.0
 	go.opentelemetry.io/otel v1.11.0
 	go.opentelemetry.io/otel/trace v1.11.0
 	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd

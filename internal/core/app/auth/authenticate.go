@@ -91,7 +91,7 @@ func (s authenticateService) Save(ctx context.Context, user entities.User) error
 
 	createdUser, err := s.repo.Save(nctx, user)
 	if err == nil {
-		_ = s.notifier.Created(*createdUser)
+		_ = s.notifier.Created(nctx, *createdUser)
 	}
 
 	return err

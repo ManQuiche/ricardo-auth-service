@@ -1,12 +1,14 @@
 package nats
 
 import (
+	"context"
 	"github.com/nats-io/nats.go"
+	"gitlab.com/ricardo-public/tracing/pkg/tracing"
 	"gitlab.com/ricardo134/auth-service/internal/core/entities"
 	userports "gitlab.com/ricardo134/auth-service/internal/core/ports/user"
 )
 
-type eventsNotifier struct {
+type userEventsNotifier struct {
 	conn         *nats.EncodedConn
 	createdTopic string
 	updatedTopic string
@@ -14,25 +16,44 @@ type eventsNotifier struct {
 }
 
 func NewUserEventsNotifier(conn *nats.EncodedConn, createdTopic, updatedTopic, deletedTopic string) userports.EventsNotifier {
-	return eventsNotifier{conn, createdTopic, updatedTopic, deletedTopic}
+	return userEventsNotifier{conn, createdTopic, updatedTopic, deletedTopic}
 }
 
-func (r eventsNotifier) Created(user entities.User) error {
-	shortUser := entities.ShortUser{
-		ID:       user.ID,
-		Username: user.Username,
+func (r userEventsNotifier) Created(ctx context.Context, user entities.User) error {
+	_, span := tracing.Tracer.Start(ctx, "nats.userEventsNotifier.Created")
+	defer span.End()
+
+	withTrace := tracing.AnyWithTrace{
+		Any: entities.ShortUser{
+			ID:       user.ID,
+			Username: user.Username,
+		},
+		TraceID: span.SpanContext().TraceID().String(),
 	}
-	return r.conn.Publish(r.createdTopic, &shortUser)
+	return r.conn.Publish(r.createdTopic, &withTrace)
 }
 
-func (r eventsNotifier) Updated(user entities.User) error {
-	shortUser := entities.ShortUser{
-		ID:       user.ID,
-		Username: user.Username,
+func (r userEventsNotifier) Updated(ctx context.Context, user entities.User) error {
+	_, span := tracing.Tracer.Start(ctx, "nats.userEventsNotifier.Updated")
+	defer span.End()
+
+	withTrace := tracing.AnyWithTrace{
+		Any: entities.ShortUser{
+			ID:       user.ID,
+			Username: user.Username,
+		},
+		TraceID: span.SpanContext().TraceID().String(),
 	}
-	return r.conn.Publish(r.updatedTopic, &shortUser)
+	return r.conn.Publish(r.updatedTopic, &withTrace)
 }
 
-func (r eventsNotifier) Deleted(userID uint) error {
-	return r.conn.Publish(r.deletedTopic, userID)
+func (r userEventsNotifier) Deleted(ctx context.Context, userID uint) error {
+	_, span := tracing.Tracer.Start(ctx, "nats.userEventsNotifier.Deleted")
+	defer span.End()
+
+	withTrace := tracing.AnyWithTrace{
+		Any:     userID,
+		TraceID: span.SpanContext().TraceID().String(),
+	}
+	return r.conn.Publish(r.deletedTopic, &withTrace)
 }
