@@ -5,6 +5,7 @@ go 1.19
 require (
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/gin-gonic/gin v1.7.7
+	github.com/google/martian/v3 v3.2.1
 	github.com/lib/pq v1.10.4
 	github.com/nats-io/nats.go v1.16.0
 	github.com/pkg/errors v0.8.1
