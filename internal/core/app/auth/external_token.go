@@ -55,7 +55,7 @@ func (e externalTokenService) Verify(ctx context.Context, token string) (*tokens
 			return nil, err
 		}
 
-		_ = e.notifier.Created(*existingUser)
+		_ = e.notifier.Created(nctx, *existingUser)
 	}
 
 	return generate(strconv.Itoa(int(existingUser.ID)), tokens.UserRole, e.accessSecret, e.refreshSecret), nil
