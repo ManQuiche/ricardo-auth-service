@@ -11,7 +11,7 @@ import (
 )
 
 type UserHandler interface {
-	Requested(awt tracing.AnyWithTrace)
+	Requested(awt tracing.AnyWithTrace[uint])
 }
 
 type userHandler struct {
@@ -22,7 +22,7 @@ func NewNatsUserHandler(userSvc user.Service) UserHandler {
 	return userHandler{userSvc}
 }
 
-func (nh userHandler) Requested(awt tracing.AnyWithTrace) {
+func (nh userHandler) Requested(awt tracing.AnyWithTrace[uint]) {
 	traceID, err := trace.TraceIDFromHex(awt.TraceID)
 	if err != nil {
 		log.Println(errors.Wrap(err, fmt.Sprintf("cannot parse traceID %s", awt.TraceID)).Error())
@@ -36,10 +36,5 @@ func (nh userHandler) Requested(awt tracing.AnyWithTrace) {
 	nctx, span := tracing.Tracer.Start(ctx, "nats.UserHandler.Requested")
 	defer span.End()
 
-	userID, ok := awt.Any.(uint)
-	if ok == false {
-
-	}
-
-	_, _ = nh.userService.Get(nctx, userID)
+	_, _ = nh.userService.Get(nctx, awt.Any)
 }

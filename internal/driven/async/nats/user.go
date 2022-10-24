@@ -23,13 +23,14 @@ func (r userEventsNotifier) Created(ctx context.Context, user entities.User) err
 	_, span := tracing.Tracer.Start(ctx, "nats.userEventsNotifier.Created")
 	defer span.End()
 
-	withTrace := tracing.AnyWithTrace{
+	withTrace := tracing.AnyWithTrace[entities.ShortUser]{
 		Any: entities.ShortUser{
 			ID:       user.ID,
 			Username: user.Username,
 		},
 		TraceID: span.SpanContext().TraceID().String(),
 	}
+
 	return r.conn.Publish(r.createdTopic, &withTrace)
 }
 
@@ -37,7 +38,7 @@ func (r userEventsNotifier) Updated(ctx context.Context, user entities.User) err
 	_, span := tracing.Tracer.Start(ctx, "nats.userEventsNotifier.Updated")
 	defer span.End()
 
-	withTrace := tracing.AnyWithTrace{
+	withTrace := tracing.AnyWithTrace[entities.ShortUser]{
 		Any: entities.ShortUser{
 			ID:       user.ID,
 			Username: user.Username,
@@ -51,7 +52,7 @@ func (r userEventsNotifier) Deleted(ctx context.Context, userID uint) error {
 	_, span := tracing.Tracer.Start(ctx, "nats.userEventsNotifier.Deleted")
 	defer span.End()
 
-	withTrace := tracing.AnyWithTrace{
+	withTrace := tracing.AnyWithTrace[uint]{
 		Any:     userID,
 		TraceID: span.SpanContext().TraceID().String(),
 	}

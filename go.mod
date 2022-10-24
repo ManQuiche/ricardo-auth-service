@@ -5,14 +5,13 @@ go 1.19
 require (
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/gin-gonic/gin v1.7.7
-	github.com/google/martian/v3 v3.2.1
 	github.com/lib/pq v1.10.4
 	github.com/nats-io/nats.go v1.16.0
 	github.com/pkg/errors v0.8.1
 	github.com/swaggo/swag v1.8.5
 	gitlab.com/ricardo-public/errors v1.0.4
 	gitlab.com/ricardo-public/jwt-tools/v2 v2.2.3
-	gitlab.com/ricardo-public/tracing v0.3.0
+	gitlab.com/ricardo-public/tracing v0.4.0
 	go.opentelemetry.io/otel v1.11.0
 	go.opentelemetry.io/otel/trace v1.11.0
 	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
