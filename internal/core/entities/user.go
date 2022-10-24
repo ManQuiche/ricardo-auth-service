@@ -7,8 +7,7 @@ import (
 )
 
 type User struct {
-	ID uint `json:"id" gorm:"primarykey"`
-
+	ID          uint        `json:"id" gorm:"primarykey"`
 	Username    string      `json:"username"`
 	Email       string      `json:"email" gorm:"uniqueIndex, notNull"`
 	Password    string      `json:"-" gorm:"notNull"`
@@ -23,7 +22,7 @@ type User struct {
 }
 
 type ShortUser struct {
-	ID       uint   `json:"id" gorm:"primarykey"`
+	ID       uint   `json:"id"`
 	Username string `json:"username"`
 }
 
