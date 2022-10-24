@@ -88,7 +88,7 @@ func (c controller) Me(gtx *gin.Context) {
 // @Success 200 {object} entities.User
 // @Failure 400 {object} ricardoErr.RicardoError
 // @Failure 404 {object} ricardoErr.RicardoError
-// @Router /users/{user_id} [patch]
+// @Router /users/{user_id} [put]
 func (c controller) Update(gtx *gin.Context) {
 	span := gtx.Request.Context().Value(tracing.HttpSpanKey).(trace.Span)
 	defer span.End()

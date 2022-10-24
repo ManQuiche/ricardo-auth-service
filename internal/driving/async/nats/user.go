@@ -3,11 +3,11 @@ package nats
 import (
 	"context"
 	"fmt"
-	"github.com/google/martian/v3/log"
 	"github.com/pkg/errors"
 	"gitlab.com/ricardo-public/tracing/pkg/tracing"
 	"gitlab.com/ricardo134/auth-service/internal/core/ports/user"
 	"go.opentelemetry.io/otel/trace"
+	"log"
 )
 
 type UserHandler interface {
@@ -25,7 +25,7 @@ func NewNatsUserHandler(userSvc user.Service) UserHandler {
 func (nh userHandler) Requested(awt tracing.AnyWithTrace) {
 	traceID, err := trace.TraceIDFromHex(awt.TraceID)
 	if err != nil {
-		log.Errorf(errors.Wrap(err, fmt.Sprintf("cannot parse traceID %s", awt.TraceID)).Error())
+		log.Println(errors.Wrap(err, fmt.Sprintf("cannot parse traceID %s", awt.TraceID)).Error())
 	}
 
 	ctx := trace.ContextWithRemoteSpanContext(context.Background(), trace.NewSpanContext(

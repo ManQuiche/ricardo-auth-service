@@ -74,7 +74,7 @@ func initRoutes() {
 	usrRouter := router.Group("/users", accessMiddleware.Authorize)
 	usrRouter.GET("/:user_id", userController.Get)
 	usrRouter.GET("/me", userController.Me)
-	usrRouter.PATCH("/:user_id", userController.Update)
+	usrRouter.PUT("/:user_id", userController.Update)
 	usrRouter.DELETE("/:user_id", userController.Delete)
 }
 
