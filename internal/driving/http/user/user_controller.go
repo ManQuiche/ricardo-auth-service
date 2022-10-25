@@ -126,7 +126,7 @@ func (c controller) Update(gtx *gin.Context) {
 
 	updUser, err := c.uSvc.Update(gtx.Request.Context(), u)
 	if err != nil {
-		span.SetAttributes(semconv.HTTPStatusCodeKey.String(strconv.Itoa(http.StatusNotFound)))
+		span.SetAttributes(semconv.HTTPStatusCodeKey.String(strconv.Itoa(http.StatusInternalServerError)))
 		_ = ricardoErr.GinErrorHandler(gtx, err)
 		return
 	}
