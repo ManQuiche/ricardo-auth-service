@@ -54,12 +54,12 @@ func (s authenticateService) Login(ctx context.Context, loginRequest entities.Lo
 	var err error
 	defer span.End()
 
+	span.SetAttributes(attribute.KeyValue{Key: "user.email", Value: attribute.StringValue(loginRequest.Email)})
+
 	user, err := s.repo.EmailExists(nctx, loginRequest.Email)
 	if err != nil || (*user == entities.User{}) {
 		return nil, errorsext.New(errorsext.ErrUnauthorized, customRicardoErr.ErrCannotFindUserDescription)
 	}
-
-	span.SetAttributes(attribute.KeyValue{Key: "user.email", Value: attribute.StringValue(user.Email)})
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginRequest.Password))
 	if err != nil {
@@ -75,6 +75,8 @@ func (s authenticateService) Save(ctx context.Context, user entities.User) error
 	nctx, span := tracing.Tracer.Start(ctx, "auth.authenticateService.Save")
 	var err error
 	defer span.End()
+
+	span.SetAttributes(attribute.KeyValue{Key: "user.email", Value: attribute.StringValue(user.Email)})
 
 	existingUser, _ := s.repo.EmailExists(nctx, user.Email)
 	if existingUser != nil {
