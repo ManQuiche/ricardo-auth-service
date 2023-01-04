@@ -80,6 +80,7 @@ func initRoutes() {
 
 func ServeHTTP() {
 	router = gin.Default()
+	_ = router.SetTrustedProxies(nil)
 
 	initRoutes()
 
