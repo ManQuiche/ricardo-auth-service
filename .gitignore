@@ -23,5 +23,6 @@
 *.iml
 out
 gen
+.fleet
 
 docs

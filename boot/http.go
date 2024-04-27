@@ -2,14 +2,22 @@ package boot
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
+	tokens "gitlab.com/ricardo-public/jwt-tools/v2/pkg/token"
+	gintracing "gitlab.com/ricardo-public/tracing/pkg/gin"
+	"gitlab.com/ricardo134/auth-service/internal/driving/http/auth"
+	"gitlab.com/ricardo134/auth-service/internal/driving/http/user"
 	"log"
 	"net/http"
-	"ricardo/auth-service/internal/driving/http/auth"
+
+	"github.com/gin-gonic/gin"
 )
 
 var (
 	router *gin.Engine
+)
+
+const (
+	SpanKey = "span"
 )
 
 // @title auth-service
@@ -24,25 +32,25 @@ var (
 //
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
-//
-// @BasePath  /auth
 
 func initRoutes() {
+	router.Use(gintracing.TraceRequest)
+
 	// Ready route
 	router.GET("/", func(context *gin.Context) {
 		context.Status(http.StatusOK)
 	})
 
-	authrController := auth.NewController(authenticateService)
+	accessMiddleware := tokens.NewJwtAuthMiddleware([]byte(accessSecret))
+	refreshMiddleware := tokens.NewJwtAuthMiddleware([]byte(refreshSecret))
+
+	authrController := auth.NewBasicController(authenticateService)
+	firebaseController := auth.NewFirebaseController(externalTokenService)
+	userController := user.NewController(userService)
 
 	authRouter := router.Group("/auth")
 	authRouter.POST("/login", authrController.Login)
 	authRouter.POST("/register", authrController.Create)
-
-	// JWT Middleware definition
-	accessMiddleware := auth.NewJwtAuthMiddleware(authorizationService, false)
-	refreshMiddleware := auth.NewJwtAuthMiddleware(authorizationService, true)
-
 	// @Summary Serve a new token pair
 	// @Description Serve a new refresh token if the given one is good, and a new access token too
 	// @Success 200
@@ -51,12 +59,21 @@ func initRoutes() {
 	authRouter.GET("/access", accessMiddleware.Authorize, func(context *gin.Context) {
 		context.Status(http.StatusOK)
 	})
-
 	authRouter.GET("/refresh", refreshMiddleware.Authorize, authrController.Refresh)
+
+	firebaseRouter := authRouter.Group("/firebase")
+	firebaseRouter.POST("/login", firebaseController.Login)
+
+	usrRouter := router.Group("/users", accessMiddleware.Authorize)
+	usrRouter.GET("/:user_id", userController.Get)
+	usrRouter.GET("/me", userController.Me)
+	usrRouter.PUT("/:user_id", userController.Update)
+	usrRouter.DELETE("/:user_id", userController.Delete)
 }
 
 func ServeHTTP() {
 	router = gin.Default()
+	_ = router.SetTrustedProxies(nil)
 
 	initRoutes()
 

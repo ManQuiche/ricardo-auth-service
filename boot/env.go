@@ -1,43 +1,63 @@
 package boot
 
 import (
+	"gitlab.com/ricardo134/auth-service/pkg/errors"
 	"log"
 	"os"
-	"ricardo/auth-service/pkg/errors"
 	"strconv"
 )
 
 var (
+	accessSecret  string
 	dbHost        string
+	dbPassword    string
 	dbPort        string
 	dbUser        string
-	dbPassword    string
+	dbDatabase    string
 	port          string
-	url           string
-	accessSecret  string
 	refreshSecret string
+	url           string
+
+	natsURL         string
+	natsUsr         string
+	natsPwd         string
+	natsUserCreated string
+	natsUserUpdated string
+	natsUserDeleted string
 
 	noFirebase bool
 	debug      bool
+
+	environment     string
+	tracingEndpoint string
 )
 
 func LoadEnv() {
-	var err error
-
-	dbHost = env("DB_HOST")
-	dbPort = env("DB_PORT")
-	dbUser = env("DB_USER")
-	dbPassword = env("DB_PASSWORD")
-	port = env("PORT")
-	url = env("URL")
 	accessSecret = env("ACCESS_SECRET")
 	refreshSecret = env("REFRESH_SECRET")
-	noFirebase = envBool("NO_FIREBASE")
-	debug = envBool("DEBUG")
 
-	if err != nil {
-		log.Fatal("env var DEBUG needs to be of boolean type")
-	}
+	dbHost = env("DB_HOST")
+	dbPassword = env("DB_PASSWORD")
+	dbPort = env("DB_PORT")
+	dbUser = env("DB_USER")
+	dbDatabase = env("DB_DATABASE")
+
+	debug = envBool("DEBUG")
+	noFirebase = envBool("NO_FIREBASE")
+	port = env("PORT")
+	url = env("URL")
+
+	natsURL = env("NATS_URL")
+	natsUsr = env("NATS_USR")
+	natsPwd = env("NATS_PWD")
+	natsUserCreated = env("NATS_USER_CREATED")
+	natsUserUpdated = env("NATS_USER_UPDATED")
+	natsUserDeleted = env("NATS_USER_DELETED")
+
+	// DMZ, QA, PROD ?
+	environment = env("ENVIRONMENT")
+
+	tracingEndpoint = env("TRACING_ENDPOINT")
 }
 
 func envBool(name string) bool {
